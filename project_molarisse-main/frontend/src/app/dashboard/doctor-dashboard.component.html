@@ -1,0 +1,369 @@
+<div class="dashboard-container" [class.menu-collapsed]="!isMenuOpen" [class.menu-open]="isMenuOpen && isMobile">
+  <!-- Sidebar -->
+  <nav class="side-nav" [class.collapsed]="!isMenuOpen" [class.sidebar-locked]="!isVerified && verificationStatusChecked">
+    <div class="logo-section">
+      <div class="logo">
+        <div class="logo-img-container">
+          <img src="assets/images/molarisse.png" alt="Tooth Logo" class="tooth-logo">
+          <div class="shine-effect"></div>
+        </div>
+        <span class="logo-text"></span>
+        <span class="role-text">Médecin</span>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <a class="nav-link" (click)="isVerified ? showDashboard() : null" [class.active]="activeSection === 'dashboard'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked">
+        <div class="nav-icon">
+          <i class="fas fa-home"></i>
+        </div>
+        <span>Tableau de bord</span>
+      </a>
+      
+      <a class="nav-link" (click)="isVerified ? showProfile() : null" [class.active]="activeSection === 'profile'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked">
+        <div class="nav-icon">
+          <i class="fas fa-user"></i>
+        </div>
+        <span>Mon Profil</span>
+      </a>
+
+      <a class="nav-link" (click)="isVerified ? showAppointments() : null" [class.active]="activeSection === 'appointments'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked">
+        <div class="nav-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <span>Rendez-vous</span>
+      </a>
+
+      <a class="nav-link" (click)="isVerified ? showCalendar() : null" [class.active]="activeSection === 'calendar'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked">
+        <div class="nav-icon">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+        <span>Calendrier</span>
+      </a>
+
+      <a class="nav-link" (click)="isVerified ? showStatistics() : null" [class.active]="activeSection === 'statistics'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked">
+        <div class="nav-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <span>Statistiques</span>
+      </a>
+
+      <a class="nav-link" (click)="isVerified ? showMessaging() : null" [class.active]="activeSection === 'messaging'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked">
+        <div class="nav-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <span>Messagerie</span>
+      </a>
+
+      <a class="nav-link" (click)="isVerified ? showUnassignedSecretaries() : null" [class.active]="activeSection === 'unassigned-secretaries'" [class.disabled-nav-link]="!isVerified && verificationStatusChecked" matTooltip="Secrétaires disponibles">
+        <div class="nav-icon">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <span>Secrétaires disponibles</span>
+      </a>
+    </div>
+
+    <div *ngIf="!isVerified && verificationStatusChecked" class="sidebar-lock-overlay">
+      <mat-icon class="sidebar-lock-icon" color="warn">lock</mat-icon>
+      <span class="sidebar-lock-text">Accès restreint</span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="toggleMenu()" [class.active]="!isMenuOpen" *ngIf="!isMobile">
+          <mat-icon>{{ isMenuOpen ? 'menu_open' : 'menu' }}</mat-icon>
+        </button>
+        <div class="brand">
+          <img src="assets/images/molarisse.png" alt="Molarisse" class="brand-logo">
+          <span class="brand-name">Molaris</span>
+        </div>
+        <div class="search-bar">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Rechercher..." class="search-input">
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="fullscreen-toggle" (click)="toggleFullscreen()" matTooltip="{{ isFullscreen ? 'Quitter le mode plein écran' : 'Mode plein écran' }}">
+          <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+        <div class="notifications"
+          [class.navbar-icon-locked]="!isVerified && verificationStatusChecked"
+          [matTooltip]="isVerified ? 'Notifications' : 'Accès restreint'"
+          (click)="isVerified ? null : $event.preventDefault()">
+          <app-notification-bell></app-notification-bell>
+          <mat-icon *ngIf="!isVerified && verificationStatusChecked" color="warn" style="margin-left: 4px;">lock</mat-icon>
+        </div>
+        <div class="messaging"
+          [class.navbar-icon-locked]="!isVerified && verificationStatusChecked"
+          [matTooltip]="isVerified ? 'Messagerie' : 'Accès restreint'"
+          (click)="isVerified ? null : $event.preventDefault()">
+          <app-message-bell></app-message-bell>
+          <mat-icon *ngIf="!isVerified && verificationStatusChecked" color="warn" style="margin-left: 4px;">lock</mat-icon>
+        </div>
+        <div
+          class="staff-button"
+          [class.staff-button-locked]="!isVerified && verificationStatusChecked"
+          (click)="isVerified ? showMyStaff() : null"
+          [matTooltip]="isVerified ? 'Mon équipe' : 'Accès restreint'"
+        >
+          <mat-icon>people</mat-icon>
+          <mat-icon *ngIf="!isVerified && verificationStatusChecked" color="warn" style="margin-left: 4px;">lock</mat-icon>
+        </div>
+        <div class="user-profile" (click)="toggleProfileDropdown()">
+          <img [src]="profileImage" 
+               alt="Profile" 
+               class="profile-image" 
+               (error)="handleImageError($event)">
+          <div class="user-info">
+            <span class="user-name">{{ doctorName }}</span>
+            <span class="user-role">Médecin</span>
+          </div>
+          <mat-icon class="dropdown-icon" [class.open]="isProfileDropdownOpen">expand_more</mat-icon>
+          <div class="profile-dropdown" [class.show]="isProfileDropdownOpen">
+            <a (click)="showProfile()" class="dropdown-item">
+              <mat-icon>person</mat-icon>
+              <span>Mon Profil</span>
+            </a>
+            <a (click)="showSettings()" class="dropdown-item">
+              <mat-icon>settings</mat-icon>
+              <span>Paramètres</span>
+            </a>
+            <a (click)="resetColorPreferences()" class="dropdown-item">
+              <mat-icon>format_color_reset</mat-icon>
+              <span>Réinitialiser les couleurs</span>
+            </a>
+            <a (click)="showNotifications()" class="dropdown-item">
+              <mat-icon>notifications</mat-icon>
+              <span>Notifications</span>
+            </a>
+            <a (click)="logout()" class="dropdown-item logout">
+              <mat-icon>logout</mat-icon>
+              <span>Déconnexion</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrapper" [class.menu-collapsed]="!isMenuOpen">
+      <!-- Dashboard View -->
+      <div *ngIf="activeSection === 'dashboard'">
+        <!-- Pending verification message -->
+        <div *ngIf="!isVerified && verificationStatusChecked" class="pending-verification-message">
+          <mat-card style="margin: 2rem auto; max-width: 600px; text-align: center; background: #fffbe6; border: 1px solid #ffe082;">
+            <mat-icon style="font-size: 48px; color: #ffb300;">hourglass_empty</mat-icon>
+            <h2>Votre profil est en cours de vérification</h2>
+            <p>Vous aurez accès à toutes les fonctionnalités de l'application une fois votre demande acceptée.</p>
+          </mat-card>
+        </div>
+        
+        <!-- Verified doctor dashboard content -->
+        <ng-container *ngIf="isVerified && verificationStatusChecked">
+          <mat-card style="margin: 2rem auto; max-width: 600px; text-align: center; border: 1px solid #e0e0e0;">
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <mat-icon style="font-size: 36px; margin-right: 1rem; color: #4caf50;">verified_user</mat-icon>
+              <h2 style="margin: 0; color: #333;">État de vérification: <span style="color: #4caf50; font-weight: bold;">Approuvé</span></h2>
+            </div>
+            <p>Votre compte est vérifié. Vous avez accès à toutes les fonctionnalités de l'application.</p>
+          </mat-card>
+          
+          <div class="welcome-card">
+            <div class="welcome-content">
+              <h2>Bienvenue dans votre espace médecin</h2>
+              <p>Gérez vos rendez-vous et votre cabinet médical.</p>
+              
+              <button class="welcome-action-btn" (click)="showAppointments()">
+                <i class="fas fa-calendar-plus"></i>
+                Gérer mes rendez-vous
+              </button>
+            </div>
+            <div class="welcome-illustration">
+              <div class="default-illustration">
+                <i class="fas fa-plus-circle illustration-icon"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-calendar-day"></i>
+              </div>
+              <div class="stat-details">
+                <h3>Rendez-vous aujourd'hui</h3>
+                <p class="stat-number">{{ todayAppointments }}</p>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-details">
+                <h3>En attente de confirmation</h3>
+                <p class="stat-number">{{ pendingAppointments }}</p>
+              </div>
+            </div>
+  
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stat-details">
+                <h3>Total des rendez-vous</h3>
+                <p class="stat-number">{{ totalAppointments }}</p>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Recent Appointments Section -->
+          <div class="recent-appointments">
+            <div class="section-header">
+              <h2>Rendez-vous récents</h2>
+              <button mat-button color="primary" (click)="showAppointments()">
+                Voir tout <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+            <app-doctor-secretary-view></app-doctor-secretary-view>
+          </div>
+        </ng-container>
+      </div>
+      
+      <!-- Profile View -->
+      <ng-container *ngIf="isVerified">
+        <div *ngIf="activeSection === 'profile'">
+          <app-profile></app-profile>
+        </div>
+      </ng-container>
+
+      <!-- Appointments View -->
+      <ng-container *ngIf="isVerified">
+        <div *ngIf="activeSection === 'appointments'" class="dashboard-section appointments-section">
+          <div class="section-header">
+            <h2>Gérer mes rendez-vous</h2>
+            <p>Consultez et gérez vos rendez-vous avec les patients</p>
+          </div>
+          
+          <!-- Only show appointment list, not calendar -->
+          <div class="list-view">
+            <div class="appointment-heading">
+              <h3>Liste des rendez-vous avec les patients</h3>
+              <p>Tous vos rendez-vous sont affichés ci-dessous, triés par date.</p>
+            </div>
+            
+            <app-doctor-secretary-view></app-doctor-secretary-view>
+            
+            <div class="view-more-container">
+              <button mat-flat-button color="primary" (click)="showCalendar()">
+                <mat-icon>calendar_today</mat-icon>
+                Voir le calendrier
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Calendar View -->
+      <ng-container *ngIf="isVerified">
+        <div *ngIf="activeSection === 'calendar'" class="calendar-section">
+          <div class="section-header">
+            <h2>Calendrier des Rendez-vous</h2>
+            <div class="section-header-actions">
+              <p>Visualisez tous les rendez-vous sur une vue calendrier</p>
+              <button class="color-palette-button" (click)="showSettings()" matTooltip="Personnaliser les couleurs">
+                <mat-icon>palette</mat-icon>
+                <span>Personnaliser les couleurs</span>
+              </button>
+            </div>
+          </div>
+          <app-appointment-calendar [userRole]="'doctor'"></app-appointment-calendar>
+        </div>
+      </ng-container>
+
+      <!-- Statistics View -->
+      <div *ngIf="activeSection === 'statistics'">
+        <app-doctor-statistics></app-doctor-statistics>
+      </div>
+
+      <!-- Secretary Requests View -->
+      <div *ngIf="activeSection === 'secretary-requests'">
+        <app-secretary-requests></app-secretary-requests>
+      </div>
+
+      <!-- Unassigned Secretaries View -->
+      <ng-container *ngIf="isVerified">
+        <div *ngIf="activeSection === 'unassigned-secretaries'">
+          <app-unassigned-secretaries></app-unassigned-secretaries>
+        </div>
+      </ng-container>
+
+      <!-- My Staff View -->
+      <div *ngIf="activeSection === 'my-staff'">
+        <app-assigned-secretaries></app-assigned-secretaries>
+      </div>
+
+      <!-- Messaging View -->
+      <ng-container *ngIf="isVerified">
+        <div *ngIf="activeSection === 'messaging'" class="messaging-section">
+          <div class="section-header">
+            <h2>Messagerie</h2>
+            <p>Communiquez avec vos patients et collègues</p>
+          </div>
+          <app-messaging></app-messaging>
+        </div>
+      </ng-container>
+
+      <!-- Settings View -->
+      <div *ngIf="activeSection === 'settings'" class="settings-view">
+        <div class="section-header">
+          <h2>Paramètres</h2>
+        </div>
+        <div class="settings-content">
+          <div class="settings-card">
+            <h3>Paramètres du compte</h3>
+            <div class="settings-group">
+              <div class="setting-item">
+                <span class="setting-label">Notifications</span>
+                <mat-slide-toggle color="primary">
+                  Activer les notifications
+                </mat-slide-toggle>
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Langue</span>
+                <mat-form-field appearance="outline">
+                  <mat-select value="fr">
+                    <mat-option value="fr">Français</mat-option>
+                    <mat-option value="en">English</mat-option>
+                    <mat-option value="ar">العربية</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          
+          <div class="settings-card">
+            <h3>Paramètres de confidentialité</h3>
+            <div class="settings-group">
+              <div class="setting-item">
+                <span class="setting-label">Visibilité du profil</span>
+                <mat-slide-toggle color="primary">
+                  Profil public
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add mobile menu toggle button at bottom right on small screens -->
+  <button *ngIf="isMobile" class="menu-toggle mobile-fab" (click)="toggleMenu()">
+    <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
+</div>
+

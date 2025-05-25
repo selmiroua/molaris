@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="10" fill="#F0F9FF" />
+  
+  <!-- Background elements -->
+  <circle cx="200" cy="150" r="100" fill="#E0F2FE" />
+  <circle cx="350" cy="50" r="20" fill="#BAE6FD" />
+  <circle cx="50" cy="250" r="30" fill="#BAE6FD" />
+  
+  <!-- Clipboard -->
+  <rect x="130" y="80" width="140" height="180" rx="8" fill="#FFFFFF" stroke="#0EA5E9" stroke-width="2" />
+  <rect x="130" y="80" width="140" height="30" rx="8" fill="#0EA5E9" />
+  <rect x="150" y="95" width="100" height="10" rx="5" fill="#FFFFFF" opacity="0.5" />
+  
+  <!-- Lines on clipboard -->
+  <rect x="150" y="130" width="100" height="4" rx="2" fill="#E0F2FE" />
+  <rect x="150" y="150" width="100" height="4" rx="2" fill="#E0F2FE" />
+  <rect x="150" y="170" width="100" height="4" rx="2" fill="#E0F2FE" />
+  <rect x="150" y="190" width="80" height="4" rx="2" fill="#E0F2FE" />
+  <rect x="150" y="210" width="40" height="4" rx="2" fill="#E0F2FE" />
+  
+  <!-- Doctor icon -->
+  <circle cx="200" cy="75" r="35" fill="#0284C7" />
+  <rect x="185" y="57" width="30" height="6" rx="3" fill="#FFFFFF" />
+  <rect x="185" y="67" width="30" height="6" rx="3" fill="#FFFFFF" />
+  <rect x="185" y="77" width="30" height="6" rx="3" fill="#FFFFFF" />
+  <rect x="185" y="87" width="20" height="6" rx="3" fill="#FFFFFF" />
+  
+  <!-- Check mark icon -->
+  <circle cx="310" cy="230" r="30" fill="#22C55E" />
+  <path d="M295 230L305 240L325 220" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+</svg> 

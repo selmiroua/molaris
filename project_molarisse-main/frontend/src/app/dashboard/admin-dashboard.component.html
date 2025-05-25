@@ -1,0 +1,217 @@
+<div class="app-container">
+  <div class="dashboard-container" [class.menu-collapsed]="!isMenuOpen" [class.menu-open]="isMenuOpen && isMobile">
+    <!-- Sidebar -->
+    <div class="sidebar" [class.collapsed]="!isMenuOpen">
+      <div class="logo-container">
+        <img src="assets/images/molarisse.png" alt="Molarisse Logo" class="logo">
+        <div class="sidebar-text">
+          <div class="app-name">Molarisse</div>
+          <div class="role-name">Admin</div>
+        </div>
+      </div>
+      
+      <div class="nav-menu">
+        <a routerLink="/dashboard/admin" class="nav-item" [class.active]="activeSection === 'dashboard'" (click)="showDashboard()">
+          <i class="fas fa-home"></i>
+          <span>Tableau de bord</span>
+        </a>
+        
+        <a (click)="showVerifications()" class="nav-item" [class.active]="activeSection === 'verifications'">
+          <i class="fas fa-user-check"></i>
+          <span>Demandes de vérification</span>
+        </a>
+        
+        <a (click)="showProfile()" class="nav-item" [class.active]="activeSection === 'profile'">
+          <i class="fas fa-user"></i>
+          <span>Mon Profil</span>
+        </a>
+        
+        <a (click)="showSettings()" class="nav-item" [class.active]="activeSection === 'settings'">
+          <i class="fas fa-cog"></i>
+          <span>Paramètres</span>
+        </a>
+        
+        <a (click)="showMessaging()" class="nav-item" [class.active]="activeSection === 'messaging'">
+          <i class="fas fa-comments"></i>
+          <span>Messagerie</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" [class.menu-collapsed]="!isMenuOpen">
+      <!-- Header -->
+      <header class="top-header">
+        <div class="menu-toggle-container">
+          <button class="menu-toggle" (click)="toggleMenu()" *ngIf="!isMobile">
+            <i class="fas fa-bars" *ngIf="isMenuOpen"></i>
+            <i class="fas fa-bars" *ngIf="!isMenuOpen"></i>
+          </button>
+        </div>
+        
+        <div class="branding">
+          <img src="assets/images/molarisse.png" alt="Molarisse Logo" class="header-logo">
+          <span class="header-title">Molarisse</span>
+        </div>
+        
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Rechercher..." class="search-input" (input)="onSearch($event)">
+        </div>
+        
+        <div class="header-actions">
+          <button class="header-icon-button" (click)="toggleFullscreen()">
+            <i class="fas" [class.fa-expand]="!isFullscreen" [class.fa-compress]="isFullscreen"></i>
+          </button>
+          
+          <button class="header-icon-button">
+            <i class="fas fa-bell"></i>
+          </button>
+          
+          <button class="header-icon-button">
+            <i class="fas fa-envelope"></i>
+          </button>
+          
+          <div class="user-profile" (click)="toggleProfileDropdown()" #profileDropdown>
+            <img [src]="currentUser?.profileImage || '/assets/images/default-avatar.png'" alt="Profile" class="profile-image">
+            <div class="user-info">
+              <span class="user-name">{{ currentUser?.firstName || 'Admin' }} {{ currentUser?.lastName || 'User' }}</span>
+              <span class="user-role">Administrateur</span>
+            </div>
+            <i class="fas fa-chevron-down" [class.open]="isProfileDropdownOpen"></i>
+            
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown" [class.show]="isProfileDropdownOpen">
+              <a (click)="showProfile()" class="dropdown-item">
+                <i class="fas fa-user"></i>
+                <span>Mon Profil</span>
+              </a>
+              <a (click)="showSettings()" class="dropdown-item">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+              </a>
+              
+              <a (click)="logout()" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="content-area">
+        <div *ngIf="activeSection === 'dashboard'">
+          <!-- Welcome Title -->
+          <div class="welcome-section">
+            <div class="welcome-text">
+              <h1>Bienvenue sur votre tableau de bord administrateur</h1>
+              <p>Gérez les utilisateurs, consultez les statistiques et administrez la plateforme.</p>
+            </div>
+            
+            <div class="shield-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+          </div>
+          
+         
+
+          <!-- Stats Cards -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-icon users-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">UTILISATEURS</div>
+                <div class="stat-value">{{ stats.totalUsers || '1422' }}</div>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-icon doctors-icon">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">MÉDECINS</div>
+                <div class="stat-value">{{ stats.totalDoctors || '66' }}</div>
+              </div>
+            </div>
+            
+           
+             
+            
+            <div class="stat-card">
+              <div class="stat-icon verifications-icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">VÉRIFICATIONS EN ATTENTE</div>
+                <div class="stat-value">{{ stats.pendingVerifications  }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Cards -->
+          <div class="action-cards">
+            <div class="action-card" (click)="showVerifications()">
+              <div class="action-icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <h3>Vérifications</h3>
+              <p>Approuver les demandes de vérification des médecins</p>
+            </div>
+            
+            <div class="action-card">
+              <div class="action-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <h3>Utilisateurs</h3>
+              <p>Gérer les comptes utilisateurs</p>
+            </div>
+            
+            <div class="action-card">
+              <div class="action-icon">
+                <i class="fas fa-cog"></i>
+              </div>
+              <h3>Paramètres</h3>
+              <p>Configurer la plateforme</p>
+            </div>
+            
+            <div class="action-card">
+              <div class="action-icon">
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <h3>Statistiques</h3>
+              <p>Consulter les données d'utilisation</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Views (hidden by default) -->
+        <div *ngIf="activeSection === 'profile'" class="section-view">
+          <app-profile></app-profile>
+        </div>
+        
+        <div *ngIf="activeSection === 'settings'" class="section-view">
+          <h2>Paramètres</h2>
+          <p>Configurez les paramètres de l'application</p>
+        </div>
+        
+        <div *ngIf="activeSection === 'verifications'" class="section-view">
+          <app-doctor-verifications-admin></app-doctor-verifications-admin>
+        </div>
+        
+        <div *ngIf="activeSection === 'messaging'" class="section-view">
+          <app-messaging></app-messaging>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add mobile menu toggle button at bottom right on small screens -->
+    <button *ngIf="isMobile" class="menu-toggle mobile-fab" (click)="toggleMenu()">
+      <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  </div>
+</div>

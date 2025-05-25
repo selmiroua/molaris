@@ -1,0 +1,66 @@
+<div class="verifications-container">
+  <h2>Vérifications des médecins en attente</h2>
+
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Chargement des vérifications...</p>
+  </div>
+
+  <div class="no-verifications" *ngIf="!loading && verifications.length === 0">
+    <p>Aucune vérification en attente</p>
+  </div>
+
+  <table mat-table [dataSource]="verifications" *ngIf="!loading && verifications.length > 0">
+    <!-- Date Column -->
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>Date & Heure</th>
+      <td mat-cell *matCellDef="let verification">{{ verification.submissionDate | date:'dd/MM/yyyy HH:mm' }}</td>
+    </ng-container>
+
+    <!-- Doctor Column -->
+    <ng-container matColumnDef="doctor">
+      <th mat-header-cell *matHeaderCellDef>Médecin</th>
+      <td mat-cell *matCellDef="let verification">
+        {{ verification.doctorName }}
+      </td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let verification">
+        <span class="status-badge" [class]="verification.status">
+          {{ verification.status }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Documents Column -->
+    <ng-container matColumnDef="documents">
+      <th mat-header-cell *matHeaderCellDef>Documents</th>
+      <td mat-cell *matCellDef="let verification">
+        <button mat-icon-button color="primary" (click)="viewDocuments(verification.id)">
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let verification">
+        <button mat-icon-button color="primary" (click)="approveVerification(verification.id)" 
+                [disabled]="verification.status !== 'PENDING'">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="rejectVerification(verification.id)"
+                [disabled]="verification.status !== 'PENDING'">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div> 

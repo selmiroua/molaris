@@ -1,0 +1,204 @@
+<div class="welcome-modal">
+  <div class="modal-content" *ngIf="currentStep === 1">
+    <h2 class="welcome-title">Bienvenue, {{data?.userName}} !</h2>
+    
+    <div class="illustration">
+      <img src="assets/images/welcome.png" alt="Welcome illustration">
+    </div>
+
+    <h3 class="section-title">Complétez votre profil médical</h3>
+    
+    <p class="section-text">
+      Veuillez prendre quelques instants pour compléter votre dossier médical.
+      Ces informations nous permettront de vous offrir des soins personnalisés et adaptés à vos besoins.
+    </p>
+    
+    <div class="navigation-buttons">
+      <button mat-raised-button class="next-btn" (click)="nextStep()">Suivant</button>
+    </div>
+  </div>
+
+  <div class="modal-content" *ngIf="currentStep === 2">
+    <div class="patient-form-container">
+      <div class="form-header">
+        <h2>FICHE PATIENT</h2>
+        
+      </div>
+
+      <div class="patient-form">
+        <form [formGroup]="patientForm">
+          <!-- Debug display removed -->
+
+          <div class="form-row">
+            <div class="field-container">
+              <label>Age</label>
+              <input type="number" formControlName="age" class="form-input" placeholder="Votre âge">
+            </div>
+
+            <div class="field-container">
+              <label>Gender</label>
+              <mat-radio-group formControlName="genre" class="gender-radio-group">
+                <mat-radio-button value="M" class="male">Male</mat-radio-button>
+                <mat-radio-button value="F" class="female">Female</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-container">
+              <label>Profession</label>
+              <div class="input-with-icon">
+                <mat-icon>work</mat-icon>
+                <input type="text" formControlName="profession" class="form-input" placeholder="Votre profession">
+              </div>
+            </div>
+
+            <div class="field-container">
+              <label>État général</label>
+              <div class="select-with-icon">
+                <mat-icon>health_and_safety</mat-icon>
+                <select formControlName="etatGeneral" class="form-select">
+                  <option value="">Sélectionnez votre état</option>
+                  <option value="excellent">Excellent</option>
+                  <option value="good">Bon</option>
+                  <option value="fair">Moyen</option>
+                  <option value="poor">Mauvais</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-container">
+              <label>Numéro de téléphone</label>
+              <div class="input-with-icon">
+                <mat-icon>phone</mat-icon>
+                <input type="tel" formControlName="telephone" class="form-input" placeholder="+33 ...">
+              </div>
+            </div>
+
+            <div class="field-container">
+              <label>Adresse de résidence</label>
+              <div class="input-with-icon">
+                <mat-icon>home</mat-icon>
+                <input type="text" formControlName="adresseResidence" class="form-input" placeholder="Votre adresse de résidence">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="antecedentsChirurgicaux">Antécédents chirurgicaux</label>
+            <textarea id="antecedentsChirurgicaux" formControlName="antecedentsChirurgicaux" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Prise de médicaments</label>
+            <div class="radio-group-container">
+              <mat-radio-group formControlName="priseMedicamenteuse" class="radio-group">
+                <mat-radio-button value="oui">Oui</mat-radio-button>
+                <mat-radio-button value="non">Non</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+          <mat-form-field appearance="outline" *ngIf="patientForm.get('priseMedicamenteuse')?.value === 'oui'">
+            <mat-label>Détails des médicaments</mat-label>
+            <textarea matInput formControlName="medicationDetails" rows="2" 
+                      placeholder="Veuillez préciser les médicaments que vous prenez actuellement"></textarea>
+          </mat-form-field>
+
+          <div class="allergies-section">
+            <label>Allergies :</label>
+            <div class="allergies-options" formGroupName="allergies">
+              <div class="allergy-item">
+                <label>Latex :</label>
+                <mat-radio-group formControlName="latex" class="radio-group">
+                  <mat-radio-button value="oui">Oui</mat-radio-button>
+                  <mat-radio-button value="non">Non</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <div class="allergy-item">
+                <label>Pénicilline :</label>
+                <mat-radio-group formControlName="penicilline" class="radio-group">
+                  <mat-radio-button value="oui">Oui</mat-radio-button>
+                  <mat-radio-button value="non">Non</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <div class="allergy-item">
+                <label>Anesthésiques locaux :</label>
+                <mat-radio-group formControlName="anesthesiques" class="radio-group">
+                  <mat-radio-button value="oui">Oui</mat-radio-button>
+                  <mat-radio-button value="non">Non</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <div class="allergy-item">
+                <label>Iode :</label>
+                <mat-radio-group formControlName="iode" class="radio-group">
+                  <mat-radio-button value="oui">Oui</mat-radio-button>
+                  <mat-radio-button value="non">Non</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <div class="allergy-item">
+                <label>Métaux (ex: nickel) :</label>
+                <mat-radio-group formControlName="metal" class="radio-group">
+                  <mat-radio-button value="oui">Oui</mat-radio-button>
+                  <mat-radio-button value="non">Non</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <div class="allergy-item">
+                <label>Autre :</label>
+                <mat-radio-group formControlName="autre" class="radio-group">
+                  <mat-radio-button value="oui">Oui</mat-radio-button>
+                  <mat-radio-button value="non">Non</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              
+              <mat-form-field appearance="outline" *ngIf="patientForm.get('allergies.autre')?.value === 'oui'">
+                <mat-label>Précisez vos autres allergies</mat-label>
+                <textarea matInput formControlName="autreAllergies" rows="2"
+                          placeholder="Veuillez préciser vos autres allergies"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="documents-section">
+            <h3>Documents & Radiographies</h3>
+            <div class="file-upload-container">
+              <div class="file-upload-box" (click)="fileInput.click()" (dragover)="$event.preventDefault()" (drop)="onFileDrop($event)">
+                <input #fileInput type="file" hidden (change)="onFileSelected($event)" multiple accept="image/*,.pdf">
+                <mat-icon>cloud_upload</mat-icon>
+                <p>Cliquez ou glissez vos fichiers ici</p>
+                <span class="file-types">Images, radiographies, PDF (Max 10MB)</span>
+              </div>
+              
+              <div class="uploaded-files" *ngIf="uploadedFiles.length > 0">
+                <h4>Fichiers ajoutés ({{uploadedFiles.length}})</h4>
+                <mat-list>
+                  <mat-list-item *ngFor="let file of uploadedFiles; let i = index" class="file-item">
+                    <mat-icon matListItemIcon>insert_drive_file</mat-icon>
+                    <span matListItemTitle>{{file.name}}</span>
+                    <button mat-icon-button color="warn" matListItemMeta (click)="removeFile(i)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="navigation-buttons">
+        <button mat-raised-button class="previous-btn" (click)="previousStep()">Précédent</button>
+        <button mat-raised-button class="finish-btn" (click)="terminer()" [disabled]="!patientForm.valid">
+          Terminer
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 

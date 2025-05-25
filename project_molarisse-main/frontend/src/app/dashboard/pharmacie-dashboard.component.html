@@ -1,0 +1,33 @@
+<div class="dashboard-container">
+  <div class="animated-background"></div>
+  
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo">
+        Molarisse - Pharmacie
+      </div>
+      <button class="menu-toggle" [class.active]="isMenuOpen" (click)="toggleMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+    
+    <nav class="nav-menu" [class.open]="isMenuOpen">
+      <a (click)="showDashboard(); isMenuOpen = false" [class.active]="activeSection === 'dashboard'">Accueil</a>
+      <a (click)="showProfile(); isMenuOpen = false" [class.active]="activeSection === 'profile'">Mon Profile</a>
+      <button class="logout-btn" (click)="logout()">Déconnexion</button>
+    </nav>
+  </header>
+
+  <main class="dashboard-content">
+    <div *ngIf="activeSection === 'dashboard'">
+      <h2>Bienvenue dans votre espace pharmacie</h2>
+      <!-- Dashboard content here -->
+    </div>
+    
+    <div *ngIf="activeSection === 'profile'">
+      <app-profile></app-profile>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,348 @@
+<!-- Debug info -->
+<div *ngIf="!userRole" class="debug-info">
+  <p>Loading user role...</p>
+</div>
+
+<!-- Profile Container -->
+<div class="profile-container">
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert-container" *ngIf="updateSuccess">
+    <div class="alert alert-success">
+      <mat-icon>check_circle</mat-icon>
+      <span>Profil mis à jour avec succès</span>
+      <button mat-icon-button (click)="updateSuccess = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-picture-section">
+      <div class="profile-picture-container">
+        <img [src]="profileImageUrl" 
+             alt="Photo de profil" 
+             class="profile-picture"
+             (error)="handleImageError($event)">
+        <div class="profile-picture-overlay">
+          <button mat-fab color="primary" class="change-photo-btn" (click)="triggerFileInput()">
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+        </div>
+      </div>
+      <input type="file" 
+             #fileInput 
+             style="display: none" 
+             (change)="onFileSelected($event)"
+             accept="image/*">
+    </div>
+    <div class="profile-title">
+      <h1>Mon Profil</h1>
+      <p class="subtitle">{{ userRole | titlecase }}</p>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content">
+    <!-- Profile Tabs -->
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="300ms" class="profile-tabs">
+      <!-- Personal Information Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">person</mat-icon>
+          <span class="tab-label">Informations Personnelles</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <form [formGroup]="profileForm" class="profile-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Prénom</mat-label>
+                <mat-icon matPrefix>person_outline</mat-icon>
+                <input matInput formControlName="prenom" placeholder="Votre prénom">
+                <mat-error *ngIf="profileForm.get('prenom')?.hasError('required')">Le prénom est requis</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Nom</mat-label>
+                <mat-icon matPrefix>person_outline</mat-icon>
+                <input matInput formControlName="nom" placeholder="Votre nom">
+                <mat-error *ngIf="profileForm.get('nom')?.hasError('required')">Le nom est requis</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Date de Naissance</mat-label>
+                <mat-icon matPrefix>cake</mat-icon>
+                <input matInput [matDatepicker]="dobPicker" formControlName="dateNaissance" placeholder="JJ/MM/AAAA">
+                <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                <mat-datepicker #dobPicker></mat-datepicker>
+                <mat-hint *ngIf="!profileForm.get('dateNaissance')?.value">Sélectionnez votre date de naissance</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <mat-icon matPrefix>email</mat-icon>
+                <input matInput formControlName="email" type="email" placeholder="Votre email">
+                <mat-error *ngIf="profileForm.get('email')?.hasError('required')">L'email est requis</mat-error>
+                <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Format d'email invalide</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Téléphone</mat-label>
+                <mat-icon matPrefix>phone</mat-icon>
+                <input matInput formControlName="telephone" placeholder="Votre numéro de téléphone">
+                <mat-error *ngIf="profileForm.get('telephone')?.hasError('pattern')">Format de téléphone invalide</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="address-field">
+                <mat-label>Adresse</mat-label>
+                <mat-icon matPrefix>home</mat-icon>
+                <input matInput formControlName="adresse" placeholder="Votre adresse complète">
+              </mat-form-field>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Professional Information Tab (For Doctors) -->
+      <mat-tab *ngIf="userRole && userRole.toUpperCase() === 'DOCTOR'">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">business</mat-icon>
+          <span class="tab-label">Informations Professionnelles</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <div class="info-message">
+            <mat-icon>info</mat-icon>
+            <span>Ces informations seront visibles par vos patients.</span>
+          </div>
+
+          <form [formGroup]="profileForm" class="profile-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Spécialité</mat-label>
+                <mat-icon matPrefix>school</mat-icon>
+                <input matInput formControlName="specialite" placeholder="Votre spécialité">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Ville</mat-label>
+                <mat-icon matPrefix>location_city</mat-icon>
+                <input matInput formControlName="ville" placeholder="Ville d'exercice">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Adresse du cabinet</mat-label>
+                <mat-icon matPrefix>business</mat-icon>
+                <input matInput formControlName="cabinetAdresse" placeholder="Adresse de votre cabinet">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Numéro RPPS</mat-label>
+                <mat-icon matPrefix>badge</mat-icon>
+                <input matInput formControlName="orderNumber" placeholder="Votre numéro RPPS">
+              </mat-form-field>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Medical Information Tab (For Patients) -->
+      <mat-tab *ngIf="userRole && userRole.toUpperCase() === 'PATIENT'">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">local_hospital</mat-icon>
+          <span class="tab-label">Informations Médicales</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <form [formGroup]="profileForm" class="profile-form">
+            <!-- Sexe field -->
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Sexe</mat-label>
+                <mat-icon matPrefix>wc</mat-icon>
+                <mat-select formControlName="genre">
+                  <mat-option value="F">Femme</mat-option>
+                  <mat-option value="H">Homme</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <!-- Profession field -->
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="profession-field">
+                <mat-label>Profession</mat-label>
+                <mat-icon matPrefix>work</mat-icon>
+                <input matInput formControlName="profession" placeholder="Votre profession">
+              </mat-form-field>
+            </div>
+            
+            <!-- État de Santé -->
+            <div class="info-group">
+              <h3>État de Santé</h3>
+              <mat-form-field appearance="outline" class="medical-field">
+                <mat-label>État Général</mat-label>
+                <mat-select formControlName="etatGeneral">
+                  <mat-option value="">Sélectionnez votre état</mat-option>
+                  <mat-option value="excellent">Excellent</mat-option>
+                  <mat-option value="good">Bon</mat-option>
+                  <mat-option value="fair">Moyen</mat-option>
+                  <mat-option value="poor">Mauvais</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="medical-field">
+                <mat-label>Antécédents Chirurgicaux</mat-label>
+                <textarea matInput formControlName="antecedentsChirurgicaux" rows="2" 
+                          placeholder="Décrivez vos antécédents chirurgicaux"></textarea>
+                <mat-hint *ngIf="!profileForm.get('antecedentsChirurgicaux')?.value">
+                  Aucun antécédent chirurgical signalé. Vous pouvez modifier votre profil pour ajouter des antécédents si nécessaire.
+                </mat-hint>
+              </mat-form-field>
+            </div>
+
+            <!-- Allergies -->
+            <div class="info-group">
+              <h3>Allergies</h3>
+              <div class="allergies-section">
+                <div class="allergies-display" *ngIf="getAllergies().length > 0">
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let allergie of getAllergies()" 
+                              [removable]="true" 
+                              (removed)="removeAllergy(allergie)">
+                      {{allergie}}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+                
+                <div class="empty-field-message" *ngIf="getAllergies().length === 0">
+                  <mat-icon>info</mat-icon>
+                  <span>Aucune allergie n'a été signalée.</span>
+                </div>
+                
+                <div class="add-allergy-section">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Ajouter une allergie</mat-label>
+                    <input matInput #allergyInput placeholder="Saisissez une allergie">
+                    <button mat-icon-button matSuffix (click)="addAllergy(allergyInput.value); allergyInput.value=''">
+                      <mat-icon>add_circle</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  
+                  <div class="common-allergies">
+                    <p>Suggestions :</p>
+                    <mat-chip-set>
+                      <mat-chip *ngFor="let allergie of commonAllergies"
+                                (click)="addAllergy(allergie)"
+                                [disabled]="isAllergyPresent(allergie)">
+                        {{allergie}}
+                      </mat-chip>
+                    </mat-chip-set>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Medications -->
+            <div class="info-group">
+              <h3>Prise Médicamenteuse</h3>
+              <mat-form-field appearance="outline" class="medical-field">
+                <mat-label>Détails des médicaments</mat-label>
+                <textarea matInput formControlName="medicationDetails" rows="2" 
+                          placeholder="Détaillez votre prise médicamenteuse actuelle"></textarea>
+                <mat-hint *ngIf="!profileForm.get('medicationDetails')?.value">
+                  Aucune prise médicamenteuse signalée. Vous pouvez modifier votre profil si votre situation change.
+                </mat-hint>
+              </mat-form-field>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Security Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">security</mat-icon>
+          <span class="tab-label">Sécurité</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <div class="password-form-container">
+            <h3>Changer le Mot de Passe</h3>
+            
+            <div *ngIf="passwordChangeSuccess" class="success-message">
+              <mat-icon>check_circle</mat-icon>
+              <span>Votre mot de passe a été modifié avec succès!</span>
+            </div>
+            
+            <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" class="password-form" *ngIf="!passwordChangeSuccess">
+              <mat-form-field appearance="outline">
+                <mat-label>Mot de Passe Actuel</mat-label>
+                <mat-icon matPrefix>lock</mat-icon>
+                <input matInput type="password" formControlName="currentPassword" placeholder="Saisissez votre mot de passe actuel">
+                <mat-error *ngIf="passwordForm.get('currentPassword')?.hasError('required')">
+                  Le mot de passe actuel est requis
+                </mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Nouveau Mot de Passe</mat-label>
+                <mat-icon matPrefix>lock_open</mat-icon>
+                <input matInput type="password" formControlName="newPassword" placeholder="Saisissez un nouveau mot de passe">
+                <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+                  Le nouveau mot de passe est requis
+                </mat-error>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+                  Le mot de passe doit contenir au moins 8 caractères
+                </mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Confirmer le Mot de Passe</mat-label>
+                <mat-icon matPrefix>lock_open</mat-icon>
+                <input matInput type="password" formControlName="confirmPassword" placeholder="Confirmez votre nouveau mot de passe">
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+                  La confirmation du mot de passe est requise
+                </mat-error>
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                  Les mots de passe ne correspondent pas
+                </mat-error>
+              </mat-form-field>
+              
+              <div class="form-actions">
+                <button mat-stroked-button type="submit" [disabled]="passwordForm.invalid || loading">
+                  <mat-icon>lock_reset</mat-icon>
+                  Changer le Mot de Passe
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  
+  <!-- Floating Save Button -->
+  <button mat-fab class="floating-save-btn" (click)="onSubmit()" [disabled]="loading" matTooltip="Enregistrer les modifications">
+    <mat-icon>save</mat-icon>
+  </button>
+</div>
+
+<div *ngIf="showWelcomeBanner" class="welcome-banner">
+  <!-- Your welcome banner content here -->
+  <button mat-button (click)="closeWelcomeBanner()">Fermer</button>
+</div>

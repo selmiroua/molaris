@@ -1,0 +1,339 @@
+<div class="demande-container">
+  <!-- Status View -->
+  <div *ngIf="hasExistingDemande && existingDemande?.status !== 'REJECTED'" class="status-view">
+    <mat-card class="status-card">
+      <mat-card-header>
+        <mat-card-title>État de votre demande d'adhésion</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="status-info">
+          <div class="status-badge" [ngClass]="getStatusClass(existingDemande?.status)">
+            {{ getStatusText(existingDemande?.status) }}
+          </div>
+
+          <div class="demande-details">
+            <div class="detail-row">
+              <span class="label">Date de soumission:</span>
+              <span class="value">{{ formatCreatedAt(existingDemande?.createdAt) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Nom:</span>
+              <span class="value">{{ existingDemande?.nom }} {{ existingDemande?.prenom }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Email:</span>
+              <span class="value">{{ existingDemande?.email }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Spécialité:</span>
+              <span class="value">{{ existingDemande?.specialite }}</span>
+            </div>
+            <div class="detail-row" *ngIf="existingDemande?.aCabinet">
+              <span class="label">Cabinet:</span>
+              <span class="value">{{ existingDemande?.nomCabinet }}</span>
+            </div>
+          </div>
+
+          <div class="status-message" *ngIf="existingDemande?.status === 'PENDING'">
+            <mat-icon>info</mat-icon>
+            <p>Votre demande est en cours d'examen. Nous vous contacterons dès qu'une décision sera prise.</p>
+          </div>
+
+          <div class="status-message success" *ngIf="existingDemande?.status === 'APPROVED'">
+            <mat-icon>check_circle</mat-icon>
+            <p>Votre demande a été acceptée. Vous pouvez maintenant accéder à toutes les fonctionnalités de l'application.</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Form View - Show only if no existing demande or if previous demande was rejected -->
+  <div *ngIf="!hasExistingDemande || existingDemande?.status === 'REJECTED'">
+    <div *ngIf="existingDemande?.status === 'REJECTED'" class="rejection-notice">
+      <mat-card class="warning-card">
+        <mat-card-content>
+          <mat-icon color="warn">warning</mat-icon>
+          <p>Votre précédente demande a été refusée pour la raison suivante:</p>
+          <p class="rejection-reason">{{ existingDemande?.motifRefus || 'Aucune raison spécifiée' }}</p>
+          <p>Vous pouvez soumettre une nouvelle demande en tenant compte des remarques ci-dessus.</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Existing form content -->
+    <mat-card class="demande-card">
+      <mat-card-header>
+        <mat-card-title>{{ existingDemande?.status === 'REJECTED' ? 'Nouvelle demande d\'adhésion' : 'Demande d\'adhésion à l\'application' }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Show error message only when there's an actual error -->
+        <div *ngIf="hasError && errorMessage" class="error-message">
+          <mat-icon color="warn">error</mat-icon>
+          <p>{{ errorMessage }}</p>
+          <button mat-button color="warn" (click)="dismissError()">Fermer</button>
+        </div>
+
+        <form [formGroup]="demandeForm"
+              (ngSubmit)="onSubmit()"
+              #formDirective="ngForm"
+              class="demande-form">
+          <!-- Informations personnelles -->
+          <div class="section">
+            <h3>Informations personnelles</h3>
+
+            <!-- Photo Upload -->
+            <div class="photo-upload">
+              <div class="photo-preview" *ngIf="photoPreview">
+                <img [src]="photoPreview" alt="Photo de profil" class="profile-picture">
+              </div>
+              <div class="upload-controls">
+                <input type="file" #fileInput accept="image/*" (change)="onPhotoSelected($event)" style="display: none">
+                <button type="button" mat-stroked-button (click)="fileInput.click()">
+                  Télécharger votre photo
+                </button>
+              </div>
+              <mat-error *ngIf="demandeForm.get('photo')?.hasError('required') && demandeForm.get('photo')?.touched">
+                La photo est obligatoire
+              </mat-error>
+            </div>
+
+            <!-- Nom et Prénom -->
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Nom *</mat-label>
+                <input matInput formControlName="nom">
+                <mat-error *ngIf="demandeForm.get('nom')?.hasError('required') && demandeForm.get('nom')?.touched">
+                  Le nom est obligatoire
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Prénom *</mat-label>
+                <input matInput formControlName="prenom">
+                <mat-error *ngIf="demandeForm.get('prenom')?.hasError('required') && demandeForm.get('prenom')?.touched">
+                  Le prénom est obligatoire
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Email et Téléphone -->
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Email *</mat-label>
+                <input matInput formControlName="email" type="email">
+                <mat-error *ngIf="demandeForm.get('email')?.hasError('required') && demandeForm.get('email')?.touched">
+                  L'email est obligatoire
+                </mat-error>
+                <mat-error *ngIf="demandeForm.get('email')?.hasError('email') && demandeForm.get('email')?.touched">
+                  Veuillez entrer un email valide
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Numéro de téléphone *</mat-label>
+                <input matInput formControlName="telephone">
+                <mat-error *ngIf="demandeForm.get('telephone')?.hasError('required') && demandeForm.get('telephone')?.touched">
+                  Le numéro de téléphone est obligatoire
+                </mat-error>
+                <mat-error *ngIf="demandeForm.get('telephone')?.hasError('pattern') && demandeForm.get('telephone')?.touched">
+                  Veuillez entrer un numéro de téléphone valide
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Adresse -->
+            <mat-form-field appearance="outline" class="form-group">
+              <mat-label>Adresse *</mat-label>
+              <input matInput formControlName="adresse">
+              <mat-error *ngIf="demandeForm.get('adresse')?.hasError('required') && demandeForm.get('adresse')?.touched">
+                L'adresse est obligatoire
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Ville et Code Postal -->
+            <div class="form-row">
+              <!-- Ville -->
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Ville *</mat-label>
+                <mat-select formControlName="ville">
+                  <mat-option *ngFor="let ville of villesTunisie" [value]="ville">
+                    {{ ville }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="demandeForm.get('ville')?.hasError('required') && demandeForm.get('ville')?.touched">
+                  La ville est obligatoire
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Code postal *</mat-label>
+                <input matInput formControlName="codePostal">
+                <mat-error *ngIf="demandeForm.get('codePostal')?.hasError('required') && demandeForm.get('codePostal')?.touched">
+                  Le code postal est obligatoire
+                </mat-error>
+                <mat-error *ngIf="demandeForm.get('codePostal')?.hasError('pattern') && demandeForm.get('codePostal')?.touched">
+                  Veuillez entrer un code postal valide
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Informations professionnelles -->
+          <div class="section">
+            <h3>Informations professionnelles</h3>
+
+            <!-- Années d'expérience -->
+            <mat-form-field appearance="outline" class="form-group">
+              <mat-label>Années d'expérience *</mat-label>
+              <input matInput formControlName="anneeExperience" type="number" min="0">
+              <mat-error *ngIf="demandeForm.get('anneeExperience')?.hasError('required') && demandeForm.get('anneeExperience')?.touched">
+                Les années d'expérience sont obligatoires
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Spécialités -->
+            <mat-form-field appearance="outline" class="form-group">
+              <mat-label>Spécialité *</mat-label>
+              <mat-select formControlName="specialite">
+                <mat-option *ngFor="let specialite of specialitesOptions" [value]="specialite">
+                  {{ specialite }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="demandeForm.get('specialite')?.hasError('required') && demandeForm.get('specialite')?.touched">
+                Veuillez sélectionner une spécialité
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Autre spécialité -->
+            <div class="form-group" *ngIf="autreSpecialiteVisible">
+              <mat-form-field appearance="outline">
+                <mat-label>Autre spécialité</mat-label>
+                <input matInput formControlName="autreSpecialite">
+                <mat-error *ngIf="demandeForm.get('autreSpecialite')?.hasError('required') && demandeForm.get('autreSpecialite')?.touched">
+                  Veuillez préciser votre autre spécialité
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Cabinet dentaire -->
+            <div class="form-group">
+              <mat-label>Avez-vous un cabinet dentaire ? *</mat-label>
+              <mat-radio-group formControlName="aCabinet">
+                <mat-radio-button [value]="true">Oui</mat-radio-button>
+                <mat-radio-button [value]="false">Non</mat-radio-button>
+              </mat-radio-group>
+              <mat-error *ngIf="demandeForm.get('aCabinet')?.hasError('required') && demandeForm.get('aCabinet')?.touched">
+                Veuillez indiquer si vous avez un cabinet
+              </mat-error>
+            </div>
+          </div>
+
+          <!-- Informations sur le cabinet (conditionnelles) -->
+          <div class="section" *ngIf="cabinetVisible">
+            <h3>Informations sur le cabinet</h3>
+
+            <!-- Nom du cabinet -->
+            <mat-form-field appearance="outline" class="form-group">
+              <mat-label>Nom du cabinet *</mat-label>
+              <input matInput formControlName="nomCabinet">
+              <mat-error *ngIf="demandeForm.get('nomCabinet')?.hasError('required') && demandeForm.get('nomCabinet')?.touched">
+                Le nom du cabinet est obligatoire
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Adresse du cabinet -->
+            <mat-form-field appearance="outline" class="form-group">
+              <mat-label>Adresse du cabinet *</mat-label>
+              <input matInput formControlName="adresseCabinet">
+              <mat-error *ngIf="demandeForm.get('adresseCabinet')?.hasError('required') && demandeForm.get('adresseCabinet')?.touched">
+                L'adresse du cabinet est obligatoire
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Ville du cabinet -->
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Ville du cabinet  *</mat-label>
+                <mat-select formControlName="villeCabinet">
+                  <mat-option *ngFor="let ville of villesTunisie" [value]="ville">
+                    {{ ville }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="demandeForm.get('villeCabinet')?.hasError('required') && demandeForm.get('villeCabinet')?.touched">
+                  La ville du cabinet est obligatoire
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Code postal du cabinet *</mat-label>
+                <input matInput formControlName="codePostalCabinet">
+                <mat-error *ngIf="demandeForm.get('codePostalCabinet')?.hasError('required') && demandeForm.get('codePostalCabinet')?.touched">
+                  Le code postal du cabinet est obligatoire
+                </mat-error>
+                <mat-error *ngIf="demandeForm.get('codePostalCabinet')?.hasError('pattern') && demandeForm.get('codePostalCabinet')?.touched">
+                  Veuillez entrer un code postal valide
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Photo du cabinet -->
+            <div class="photo-upload">
+              <mat-label>Photo du cabinet *</mat-label>
+              <div class="photo-preview" *ngIf="cabinetPhotoPreview">
+                <img [src]="cabinetPhotoPreview" alt="Photo du cabinet" class="profile-picture">
+              </div>
+              <div class="upload-controls">
+                <input type="file" #cabinetFileInput accept="image/*" (change)="onCabinetPhotoSelected($event)" style="display: none">
+                <button type="button" mat-stroked-button (click)="cabinetFileInput.click()">
+                  Télécharger une photo du cabinet
+                </button>
+              </div>
+              <mat-error *ngIf="demandeForm.get('photoCabinet')?.hasError('required') && demandeForm.get('photoCabinet')?.touched">
+                La photo du cabinet est obligatoire
+              </mat-error>
+            </div>
+          </div>
+
+          <!-- Diplôme -->
+          <div class="section">
+            <h3>Diplôme</h3>
+
+            <!-- Photo du diplôme -->
+            <div class="photo-upload">
+              <mat-label>Photo du diplôme *</mat-label>
+              <div class="photo-preview" *ngIf="diplomePreview">
+                <img [src]="diplomePreview" alt="Photo du diplôme" class="profile-picture">
+              </div>
+              <div class="upload-controls">
+                <input type="file" #diplomeFileInput accept="image/*" (change)="onDiplomePhotoSelected($event)" style="display: none">
+                <button type="button" mat-stroked-button (click)="diplomeFileInput.click()">
+                  Télécharger une photo du diplôme
+                </button>
+              </div>
+              <mat-error *ngIf="demandeForm.get('photoDiplome')?.hasError('required') && demandeForm.get('photoDiplome')?.touched">
+                La photo du diplôme est obligatoire
+              </mat-error>
+            </div>
+          </div>
+
+          <!-- Boutons de soumission -->
+          <div class="form-actions">
+            <button type="button" mat-stroked-button (click)="onReset()">Réinitialiser</button>
+            <button type="submit"
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="isSubmitting">
+              <span *ngIf="!isSubmitting">Soumettre la demande</span>
+              <span *ngIf="isSubmitting">
+                Envoi en cours...
+              </span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
