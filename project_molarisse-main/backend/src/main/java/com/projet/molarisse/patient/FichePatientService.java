@@ -31,6 +31,9 @@ public class FichePatientService {
     private FileStorageService fileStorageService;
 
     public FichePatient saveFichePatient(FichePatient fichePatient) {
+        logger.info("Attempting to save FichePatient with ID: {}", fichePatient.getId());
+        logger.info("FichePatient allergies: {}", fichePatient.getAllergies());
+        logger.info("FichePatient priseMedicaments: {}", fichePatient.getPriseMedicaments());
         return fichePatientRepository.save(fichePatient);
     }
 
@@ -52,17 +55,51 @@ public class FichePatientService {
     @Transactional
     public FichePatient createOrUpdateFicheWithDocuments(Integer patientId, FichePatient fichePatient, 
                                                         List<MultipartFile> files) {
-        // Set patient ID
-        fichePatient.setPatientId(patientId);
+        FichePatient ficheToSave;
         
-        // Ensure documents list is initialized
-        if (fichePatient.getDocuments() == null) {
-            fichePatient.setDocuments(new ArrayList<>());
+        // Check if fichePatient object has an ID (indicates update)
+        if (fichePatient.getId() != null) {
+            // Fetch existing fiche from DB
+            Optional<FichePatient> existingFicheOptional = fichePatientRepository.findById(fichePatient.getId());
+            if (existingFicheOptional.isPresent()) {
+                ficheToSave = existingFicheOptional.get();
+                // Update only the allowed fields from the incoming fichePatient object
+                logger.info("Existing fichePatient allergies BEFORE update: {}", ficheToSave.getAllergies());
+                logger.info("Incoming fichePatient allergies: {}", fichePatient.getAllergies());
+                if (fichePatient.getAllergies() != null) {
+                    ficheToSave.setAllergies(fichePatient.getAllergies());
+                }
+                logger.info("Existing fichePatient allergies AFTER update: {}", ficheToSave.getAllergies());
+
+                logger.info("Existing fichePatient priseMedicaments BEFORE update: {}", ficheToSave.getPriseMedicaments());
+                logger.info("Incoming fichePatient priseMedicaments: {}", fichePatient.getPriseMedicaments());
+                if (fichePatient.getPriseMedicaments() != null) {
+                    ficheToSave.setPriseMedicaments(fichePatient.getPriseMedicaments());
+                }
+                logger.info("Existing fichePatient priseMedicaments AFTER update: {}", ficheToSave.getPriseMedicaments());
+                // You might want to update other fields here if necessary, e.g., blood pressure, maladies, toothData
+                // Example: ficheToSave.setBloodPressureSystolic(fichePatient.getBloodPressureSystolic());
+                logger.info("Updating existing fichePatient with ID: {}", ficheToSave.getId());
+            } else {
+                // Existing fiche not found, proceed as if creating new but log a warning
+                logger.warn("Existing FichePatient with ID {} not found. Creating new.", fichePatient.getId());
+                ficheToSave = fichePatient;
+                ficheToSave.setPatientId(patientId); // Ensure patientId is set for new fiche
+            }
+        } else {
+            // No ID, so it's a new fichePatient
+            logger.info("Creating new FichePatient for patient ID: {}", patientId);
+            ficheToSave = fichePatient;
+            ficheToSave.setPatientId(patientId);
         }
-        
-        // Save the fiche first and flush to ensure it's in the database
-        logger.info("Saving fiche for patient ID: {}", patientId);
-        FichePatient saved = fichePatientRepository.saveAndFlush(fichePatient);
+
+        // Ensure documents list is initialized for the fiche being saved
+        if (ficheToSave.getDocuments() == null) {
+            ficheToSave.setDocuments(new ArrayList<>());
+        }
+
+        // Save the fiche (either new or updated existing one)
+        FichePatient saved = fichePatientRepository.saveAndFlush(ficheToSave);
         
         // Process any files if provided
         if (files != null && !files.isEmpty()) {

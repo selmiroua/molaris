@@ -81,6 +81,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/current-user").authenticated()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         // Patient endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/patients/{patientId}/fiche").hasAnyRole("DOCTOR", "SECRETAIRE")
+                        .requestMatchers(HttpMethod.PUT, "/api/patients/me/fiche").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers("/api/patients/me/**").authenticated()
                         .requestMatchers("/api/patients/{patientId}/**").hasAnyRole("DOCTOR", "SECRETAIRE")
                         // Explicit permissions for fiche endpoints
@@ -163,6 +165,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/bilans/{id}").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers(HttpMethod.GET, "/api/bilans").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers(HttpMethod.DELETE, "/api/bilans/{id}").hasAnyRole("DOCTOR", "SECRETAIRE")
+                        .requestMatchers(HttpMethod.GET, "/api/bilans/fichePatient/{fichePatientId}").hasAnyRole("DOCTOR", "SECRETAIRE")
                         
                         .anyRequest().authenticated()
                 )

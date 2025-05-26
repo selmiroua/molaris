@@ -1,5 +1,7 @@
 package com.projet.molarisse.bilan;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.projet.molarisse.patient.FichePatient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "bilan_medical")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BilanMedical {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +23,7 @@ public class BilanMedical {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fiche_patient_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private FichePatient fichePatient;
 
     @Column(name = "blood_pressure_systolic")
@@ -36,4 +40,7 @@ public class BilanMedical {
 
     @Column(name = "tooth_data", columnDefinition = "TEXT")
     private String toothData;
+
+    @Column(name = "cosmetic_treatments", columnDefinition = "TEXT")
+    private String cosmeticTreatments;
 } 

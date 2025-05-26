@@ -148,12 +148,18 @@ public class PatientController {
     public ResponseEntity<?> createOrUpdateFichePatient(
             @PathVariable Integer patientId,
             @RequestBody FichePatient fichePatient) {
-        logger.info("Creating/Updating fiche for patient ID: {}", patientId);
+        logger.info("Creating/Updating fiche for patient ID {} using service.", patientId);
         
-        fichePatient.setPatientId(patientId);
-        FichePatient saved = fichePatientRepository.save(fichePatient);
-        logger.info("Successfully saved fiche for patient ID: {}", patientId);
-        return ResponseEntity.ok(saved);
+        try {
+            // Delegate to service for handling create or update logic
+            FichePatient saved = fichePatientService.createOrUpdateFicheWithDocuments(patientId, fichePatient, null);
+            logger.info("Successfully processed fiche update/create for patient ID: {}", patientId);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            logger.error("Error in createOrUpdateFichePatient controller: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error processing patient fiche: " + e.getMessage()));
+        }
     }
 
     @PostMapping("/{patientId}/fiche/with-documents")

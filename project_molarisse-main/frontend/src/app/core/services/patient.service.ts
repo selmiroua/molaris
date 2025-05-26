@@ -66,7 +66,13 @@ export class PatientService {
 
   // Update current patient's medical information
   updatePatientFiche(fichePatient: FichePatient): Observable<FichePatient> {
-    return this.http.put<FichePatient>(`${this.apiUrl}/me/fiche`, fichePatient).pipe(
+    const token = localStorage.getItem('access_token');
+    return this.http.put<FichePatient>(`${this.apiUrl}/me/fiche`, fichePatient, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      })
+    }).pipe(
       tap(response => console.log('Updated fiche:', response)),
       catchError(error => {
         console.error('Error updating fiche:', error);
@@ -135,7 +141,13 @@ export class PatientService {
 
   // Create or update patient's medical information (for doctors/secretaries)
   createOrUpdateFiche(patientId: number, fichePatient: FichePatient): Observable<FichePatient> {
-    return this.http.post<FichePatient>(`${this.apiUrl}/${patientId}/fiche`, fichePatient).pipe(
+    const token = localStorage.getItem('access_token');
+    return this.http.post<FichePatient>(`${this.apiUrl}/${patientId}/fiche`, fichePatient, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      })
+    }).pipe(
       tap(response => console.log('Created/Updated patient fiche:', response)),
       catchError(error => {
         console.error('Error creating/updating patient fiche:', error);
