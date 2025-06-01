@@ -83,7 +83,8 @@ $transition-normal: all 0.3s ease;
 
 .side-nav {
   width: 260px;
-  background: white;
+  background: rgba(255,255,255,0.7); /* semi-transparent white */
+  backdrop-filter: blur(12px); /* frosted glass effect */
   color: $text-color;
   height: 100vh;
   position: fixed;

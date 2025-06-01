@@ -1,0 +1,118 @@
+<div class="ordonnance-card">
+  <div class="ordonnance-header">
+    <div class="doctor-info-block">
+      <div class="doctor-name">{{ (doctor$ | async)?.nameFr }}</div>
+      <div class="doctor-specialty">{{ (doctor$ | async)?.specialtyFr }}</div>
+    </div>
+    <div class="ordonnance-logo-img-block">
+      <img src="/assets/images/R.png" alt="Pharmacy Logo" class="ordonnance-logo-img" />
+    </div>
+    <div class="doctor-contact-vertical">
+      <div class="icon-info-pair">
+        <mat-icon class="contact-detail-icon">location_on</mat-icon>
+        <span>{{ (doctor$ | async)?.address }}</span>
+      </div>
+      <div class="icon-info-pair">
+        <mat-icon class="contact-detail-icon">phone</mat-icon>
+        <span>{{ (doctor$ | async)?.phone }}</span>
+      </div>
+      <div class="icon-info-pair">
+        <mat-icon class="contact-detail-icon">email</mat-icon>
+        <span>{{ (doctor$ | async)?.email }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="ordonnance-title-block">
+    <div class="ordonnance-title ordonnance-title-light-black">Ordonnance médicale</div>
+  </div>
+  <form [formGroup]="ordonnanceForm">
+    <div class="beneficiaire-block-centered">
+      <mat-form-field appearance="outline" class="beneficiaire-form-field-modern">
+        <mat-icon matPrefix color="primary">person</mat-icon>
+        <input matInput formControlName="patientName" placeholder="Nom du patient"
+               [readonly]="!!ordonnanceForm.get('patient')?.value?.name"
+               (click)="ordonnanceForm.get('patient')?.value?.name ? null : openPatientSelectionDialog()" />
+        <mat-label>Bénéficiaire</mat-label>
+        <button *ngIf="!ordonnanceForm.get('patient')?.value?.name"
+                mat-icon-button matSuffix type="button" (click)="openPatientSelectionDialog()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="treatment-table-block">
+      <table class="treatment-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nom du traitement</th>
+            <th>Dosage</th>
+            <th>Fréquence</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let treatment of treatments.controls; let i = index" [formGroupName]="i">
+            <td>
+              <input #rowBox type="checkbox" [checked]="selectedTreatments[i]" (change)="onSelectTreatment(i, rowBox.checked)" />
+            </td>
+            <td>
+              <div class="stepper-group treatment-name-input">
+                <input type="text" 
+                       #treatmentNameInput
+                       [value]="treatment.get('name')?.value || ''" 
+                       placeholder="Nom du traitement" 
+                       (input)="updateTreatmentName(i, treatmentNameInput.value)" />
+              </div>
+            </td>
+            <td>
+              <div class="stepper-group">
+                <button mat-mini-button type="button" (click)="decrementDose(i)">-</button>
+                <span>{{ treatment.get('dose')?.value || 1 }} fois/jour</span>
+                <button mat-mini-button type="button" (click)="incrementDose(i)">+</button>
+              </div>
+            </td>
+            <td>
+              <div class="stepper-group">
+                <button mat-mini-button type="button" (click)="decrementFrequency(i)">-</button>
+                <span>{{ treatment.get('frequency')?.value || 1 }} jours</span>
+                <button mat-mini-button type="button" (click)="incrementFrequency(i)">+</button>
+              </div>
+            </td>
+            <td>
+              <button mat-icon-button color="warn" type="button" (click)="removeTreatment(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="5" style="text-align: left; padding-top: 8px;">
+              <button mat-stroked-button color="primary" type="button" (click)="addTreatment()">
+                <mat-icon>add</mat-icon>
+                Ajouter traitement
+              </button>
+              <button *ngIf="anyTreatmentSelected()" mat-stroked-button color="warn" type="button" style="float: right;" (click)="removeSelectedTreatments()">
+                <mat-icon>delete</mat-icon>
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ordonnance-footer-block">
+      <div class="signature-section">
+        <div class="signature-label">Signature numérique du médecin :</div>
+        <canvas #signaturePad width="280" height="80" class="signature-canvas"
+          (mousedown)="startSignature($event)" (mousemove)="drawSignature($event)" (mouseup)="endSignature()"
+          (touchstart)="startSignature($event)" (touchmove)="drawSignature($event)" (touchend)="endSignature()">
+        </canvas>
+        <button mat-stroked-button color="warn" type="button" (click)="clearSignature()">Effacer</button>
+        <div class="tunis-date">Tunis, le {{ today | date:'d MMMM yyyy':'':'fr' }}</div>
+      </div>
+    </div>
+  </form>
+  <div class="ordonnance-actions">
+    <button mat-flat-button color="primary" type="button" (click)="save()">Enregistrer</button>
+    <button mat-button type="button" (click)="close()">Annuler</button>
+  </div>
+</div> 

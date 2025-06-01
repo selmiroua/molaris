@@ -81,6 +81,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/current-user").authenticated()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         // Patient endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/patients/me/fiche").hasRole("PATIENT")
                         .requestMatchers(HttpMethod.POST, "/api/patients/{patientId}/fiche").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers(HttpMethod.PUT, "/api/patients/me/fiche").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers("/api/patients/me/**").authenticated()
@@ -155,6 +156,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/doctor-verifications/**").hasRole("DOCTOR")
                         
                         // Document endpoints - secure but allow access to authenticated users
+                        .requestMatchers(HttpMethod.GET, "/api/users/documents/file/**").permitAll()
                         .requestMatchers("/api/users/documents/cabinet_photos/**").permitAll()
                         .requestMatchers("/api/users/documents/diploma_docs/**").permitAll()
                         .requestMatchers("/api/users/documents/**").authenticated()
@@ -166,7 +168,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/bilans").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers(HttpMethod.DELETE, "/api/bilans/{id}").hasAnyRole("DOCTOR", "SECRETAIRE")
                         .requestMatchers(HttpMethod.GET, "/api/bilans/fichePatient/{fichePatientId}").hasAnyRole("DOCTOR", "SECRETAIRE")
-                        
+                        .requestMatchers("/api/ordonnances/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/bilans/documents/file/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bilans/documents/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/bilans/*/document").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bilans/documents/list").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bilans/documents/file").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/bilans/{bilanId}/document/{documentId}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

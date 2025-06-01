@@ -22,6 +22,7 @@ import { CreateFicheDialogComponent } from './create-fiche-dialog.component';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DentalChartComponent } from './dental-chart.component';
 import { MedicalCheckupStepperComponent } from './medical-checkup-stepper.component';
+import { BilanMedicalService } from '../../core/services/bilan-medical.service';
 
 @Component({
   selector: 'app-appointment-detail-dialog',
@@ -52,23 +53,51 @@ import { MedicalCheckupStepperComponent } from './medical-checkup-stepper.compon
   providers: [PatientService],
   template: `
     <div class="appointment-flex-container">
-      <app-medical-checkup-stepper
-        [open]="showMedicalStepper"
-        [fichePatient]="fichePatient"
-        *ngIf="showMedicalStepper"
-        class="medical-stepper-panel">
-      </app-medical-checkup-stepper>
-      <div class="main-dialog-panel" [class.hidden-panel]="activeTab !== 'main' && !showMedicalStepper">
+      <div class="medical-stepper-panel" *ngIf="showMedicalStepper">
+        <app-medical-checkup-stepper [open]="showMedicalStepper" [fichePatient]="fichePatient" (cancel)="showMedicalStepper = false"></app-medical-checkup-stepper>
+      </div>
+      <div *ngIf="activeTab === 'history'" class="history-side-panel">
+        <h2 style="margin: 24px 0 16px 24px; font-size: 20px; color: #2e3d54;">Historique des actions</h2>
+        <div class="timeline-container-modern">
+          <div *ngFor="let event of timeline" class="timeline-event-modern">
+            <div class="timeline-date-modern">
+              <div class="date-abbr">{{ event.date | date:'MMM' | uppercase }}</div>
+              <div class="date-day">{{ event.date | date:'dd' }}</div>
+            </div>
+            <div class="timeline-line-modern"></div>
+            <div class="timeline-card-modern">
+              <div class="timeline-card-header">
+                <div class="timeline-title-modern">{{ event.label }}</div>
+                <span class="timeline-status-tag" [ngClass]="{'done': event.done, 'not-done': !event.done}">
+                  <mat-icon *ngIf="event.done" class="status-icon">check_circle</mat-icon>
+                  <mat-icon *ngIf="!event.done" class="status-icon">radio_button_unchecked</mat-icon>
+                  {{ event.done ? 'Fait' : 'Non fait' }}
+                </span>
+              </div>
+              <div class="timeline-card-date">{{ event.date | date:'dd/MM/yyyy HH:mm' }}</div>
+              <ng-container *ngIf="event.details">
+                <div class="timeline-details-row">
+                  <div><b>Condition:</b> {{ event.details.condition }}</div>
+                  <div><b>Traitement:</b> {{ event.details.treatment }}</div>
+                  <div><b>Note:</b> {{ event.details.note }}</div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div *ngIf="timeline.length === 0" style="color:#888;margin:24px;">Aucune action enregistrée pour cette consultation.</div>
+        </div>
+      </div>
+      <div class="main-dialog-panel">
         <div class="side-panel-container">
           <!-- Sidebar Icons -->
           <div class="sidebar-icons">
-            <button mat-icon-button class="sidebar-icon" (click)="activeTab = 'main'" [class.active]="activeTab === 'main'">
-              <mat-icon>calendar_today</mat-icon>
+            <button mat-icon-button class="sidebar-icon" (click)="activeTab = activeTab === 'history' ? 'main' : 'history'" [class.active]="activeTab === 'history'">
+              <mat-icon>history</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" (click)="openPatientFiche()" [class.active]="activeTab === 'fiche'">
+            <button mat-icon-button class="sidebar-icon" (click)="activeTab = 'main'" [class.active]="activeTab === 'main'">
               <mat-icon>person_outline</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" (click)="openDentalChart()" [class.active]="activeTab === 'dental'">
+            <button mat-icon-button class="sidebar-icon" (click)="openPatientFiche()" [class.active]="activeTab === 'fiche'">
               <mat-icon>medical_services</mat-icon>
             </button>
             <button mat-icon-button class="sidebar-icon" (click)="openDocuments()" [class.active]="activeTab === 'documents'">
@@ -163,8 +192,10 @@ import { MedicalCheckupStepperComponent } from './medical-checkup-stepper.compon
                     <div class="payment-row">
                       <div class="payment-info">
                         <span class="payment-label">Payment</span>
-                        <span class="bill-number">Bill #10102</span>
-                        <span class="payment-status">UNPAID</span>
+                        <span class="bill-number">Bill #{{ getBillNumber() || 'N/A' }}</span>
+                        <span *ngIf="remainingToPay !== null && remainingToPay <= 0" class="payment-status paid-status" style="background:#e6f9ed;color:#22c55e;padding:4px 12px;border-radius:8px;font-weight:600;">PAID</span>
+                        <span *ngIf="remainingToPay === null || remainingToPay > 0" class="payment-status unpaid-status" style="background:#fde8e8;color:#ef4444;padding:4px 12px;border-radius:8px;font-weight:600;">UNPAID</span>
+                        <span *ngIf="remainingToPay !== null && remainingToPay > 0" class="reste-a-payer" style="margin-left:12px;color:#d32f2f;font-weight:600;">Reste à payer: {{ remainingToPay | number:'1.2-2' }} DT</span>
                       </div>
                       <button mat-button class="reminder-button" (click)="sendReminder()">
                         <mat-icon>notifications_none</mat-icon>
@@ -249,7 +280,7 @@ import { MedicalCheckupStepperComponent } from './medical-checkup-stepper.compon
                 </div>
               </div>
             </div>
-            <div class="additional-panel" *ngIf="activeTab !== 'main'" [@slideInOut]>
+            <div class="additional-panel" *ngIf="activeTab !== 'main' && activeTab !== 'history'" [@slideInOut]>
               <ng-container *ngIf="activeTab === 'fiche'">
                 <!-- Content for Fiche tab (likely the MedicalCheckupStepperComponent summary) -->
                 <app-medical-checkup-stepper
@@ -932,11 +963,25 @@ import { MedicalCheckupStepperComponent } from './medical-checkup-stepper.compon
       flex-direction: row;
       height: 100vh;
     }
+    .history-side-panel {
+      width: 900px;
+      min-width: 340px;
+      max-width: 520px;
+      background: #fff;
+      border-right: 1.5px solid #e0e7ef;
+      box-shadow: 2px 0 12px rgba(37,99,235,0.04);
+      z-index: 20;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
     .main-dialog-panel {
       flex: 1;
       min-width: 0;
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
     }
     .fiche-info-row {
       margin-bottom: 8px;
@@ -949,30 +994,145 @@ import { MedicalCheckupStepperComponent } from './medical-checkup-stepper.compon
     }
 
     .medical-stepper-panel {
-       flex-shrink: 0;
-       width: 0; /* Start with zero width */
-       overflow: hidden;
-       transition: width 0.4s ease-in-out;
+      flex-shrink: 0;
+      width: 0;
+      overflow: hidden;
+      transition: width 0.4s ease-in-out;
+      order: -1; /* This ensures it appears first (leftmost) */
     }
 
     :host.show-medical-stepper .medical-stepper-panel {
-       width: 650px; /* Set width to match the main panel */
-    }
-
-    :host.show-medical-stepper .main-dialog-panel {
-       width: 650px;
-        /* Ensure main panel is visible when stepper is shown */
-         display: flex; /* assuming main-dialog-panel is flex container */
-         flex-direction: column; /* adjust as needed */
-    }
-
-    /* Hide the main panel when other tabs are active and stepper is not shown */
-    :host:not(.show-medical-stepper) .main-panel.hidden-panel {
-        display: none;
+      width: 650px;
     }
 
     :host.show-medical-stepper {
-       width: 1300px; /* Adjust width to accommodate both panels */
+      width: 1300px;
+    }
+
+    .main-dialog-panel {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .history-side-panel {
+      width: 420px;
+      min-width: 340px;
+      max-width: 520px;
+      background: #fff;
+      border-right: 1.5px solid #e0e7ef;
+      box-shadow: 2px 0 12px rgba(37,99,235,0.04);
+      z-index: 20;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .timeline-container-modern {
+      margin: 24px;
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: relative;
+    }
+    .timeline-event-modern {
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+      min-height: 80px;
+    }
+    .timeline-date-modern {
+      width: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      margin-right: 0;
+      z-index: 2;
+    }
+    .date-abbr {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4e5eeb;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+    .date-day {
+      font-size: 22px;
+      font-weight: 700;
+      color: #222;
+      line-height: 1;
+    }
+    .timeline-line-modern {
+      position: absolute;
+      left: 28px;
+      top: 36px;
+      width: 2.5px;
+      height: calc(100% - 36px);
+      background: #e0e7ef;
+      z-index: 1;
+    }
+    .timeline-card-modern {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.07);
+      padding: 18px 22px 14px 22px;
+      margin-left: 16px;
+      min-width: 320px;
+      max-width: 420px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .timeline-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .timeline-title-modern {
+      font-size: 16px;
+      font-weight: 600;
+      color: #222;
+    }
+    .timeline-status-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 8px;
+      background: #e6f9ed;
+      color: #22c55e;
+    }
+    .timeline-status-tag.not-done {
+      background: #fde8e8;
+      color: #ef4444;
+    }
+    .status-icon {
+      font-size: 18px;
+      vertical-align: middle;
+    }
+    .timeline-card-date {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 2px;
+    }
+    .timeline-details-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 14px;
+      color: #444;
+    }
+    .timeline-event-modern:last-child {
+      margin-bottom: 32px;
     }
   `],
   animations: [
@@ -1003,9 +1163,16 @@ export class AppointmentDetailDialogComponent implements OnInit {
     { value: AppointmentStatus.CANCELED, label: 'Annulé' }
   ];
   
-  activeTab: 'main' | 'fiche' | 'dental' | 'documents' | 'medical-checkup' = 'main';
+  activeTab: 'main' | 'fiche' | 'dental' | 'documents' | 'history' = 'main';
   
   showMedicalStepper = false;
+  
+  amountToPay: number | null = null;
+  amountPaid: number | null = null;
+  remainingToPay: number | null = null;
+  
+  timeline: any[] = [];
+  toothData: { [key: number]: any } = {};
   
   constructor(
     public dialogRef: MatDialogRef<AppointmentDetailDialogComponent>,
@@ -1015,7 +1182,8 @@ export class AppointmentDetailDialogComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private http: HttpClient,
-    private patientService: PatientService
+    private patientService: PatientService,
+    private bilanMedicalService: BilanMedicalService
   ) {
     console.log('Appointment data received:', appointment);
     console.log('Patient data:', appointment.patient);
@@ -1028,6 +1196,34 @@ export class AppointmentDetailDialogComponent implements OnInit {
     if (this.appointment.patient && this.appointment.patient.id) {
       this.loadFichePatient();
     }
+    this.buildTimeline();
+  }
+  
+  buildTimeline() {
+    // Start with the first event
+    this.timeline = [
+      { label: 'Rendez-vous créé', date: new Date(this.appointment.appointmentDateTime), done: true }
+    ];
+    // Add tooth-specific events next
+    for (const toothNum in this.toothData) {
+      const data = this.toothData[toothNum];
+      this.timeline.push({
+        label: `Dent ${toothNum}`,
+        date: data.lastUpdate || this.appointment.appointmentDateTime,
+        done: !!data.treatment,
+        details: {
+          condition: data.condition,
+          treatment: data.treatment,
+          note: data.note
+        }
+      });
+    }
+    // Then add the remaining events
+    this.timeline.push(
+      { label: 'Traitement effectué', date: new Date(this.appointment.appointmentDateTime), done: this.appointment.status === 'COMPLETED' },
+      { label: 'Paiement effectué', date: new Date(this.appointment.appointmentDateTime), done: this.remainingToPay !== null && this.remainingToPay <= 0 },
+      { label: 'Paiement restant', date: new Date(this.appointment.appointmentDateTime), done: this.remainingToPay !== null && this.remainingToPay <= 0 }
+    );
   }
   
   loadFichePatient(): void {
@@ -1064,6 +1260,36 @@ export class AppointmentDetailDialogComponent implements OnInit {
       if (fiche) {
         this.fichePatient = fiche;
         console.log('Fiche patient loaded:', this.fichePatient);
+        // Fetch BilanMedical payment fields after fichePatient is loaded
+        if (this.fichePatient && this.fichePatient.id) {
+          this.bilanMedicalService.getBilanMedicalByFichePatientId(this.fichePatient.id).subscribe({
+            next: (bilan) => {
+              if (bilan) {
+                this.amountToPay = bilan.amountToPay ?? null;
+                this.amountPaid = bilan.amountPaid ?? null;
+                this.remainingToPay = bilan.remainingToPay ?? null;
+                // Parse and store toothData
+                if (bilan.toothData) {
+                  try {
+                    this.toothData = JSON.parse(bilan.toothData);
+                  } catch (e) {
+                    this.toothData = {};
+                  }
+                } else {
+                  this.toothData = {};
+                }
+                this.buildTimeline();
+              }
+            },
+            error: (err) => {
+              this.amountToPay = null;
+              this.amountPaid = null;
+              this.remainingToPay = null;
+              this.toothData = {};
+              this.buildTimeline();
+            }
+          });
+        }
       }
     });
   }
@@ -1325,14 +1551,7 @@ export class AppointmentDetailDialogComponent implements OnInit {
   }
 
   editMedicalCheckup() {
-    // Toggle the display of the medical stepper
     this.showMedicalStepper = !this.showMedicalStepper;
-    // Hide other panels and set active tab if the medical stepper is shown
-    if (this.showMedicalStepper) {
-      this.activeTab = 'medical-checkup'; // Set active tab to medical-checkup
-    } else {
-      this.activeTab = 'main'; // Go back to main tab when stepper is hidden
-    }
   }
 
   addMedicalRecord() {

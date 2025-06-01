@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projet.molarisse.patient.FichePatient;
+import com.projet.molarisse.bilan.BilanMedical;
 
 import java.time.LocalDateTime;
 
@@ -32,6 +33,11 @@ public class AppointmentDocument {
     @JoinColumn(name = "fiche_patient_id", nullable = true)
     @JsonIgnore
     private FichePatient fichePatient;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bilan_medical_id", nullable = true)
+    @JsonIgnore
+    private BilanMedical bilanMedical;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "document_type", nullable = false)
@@ -86,6 +92,7 @@ public class AppointmentDocument {
 
     public enum DocumentType {
         APPOINTMENT,    // Document specific to an appointment (e.g., X-rays, treatment plans)
-        PATIENT        // Document specific to a patient (e.g., medical history, insurance)
+        PATIENT,        // Document specific to a patient (e.g., medical history, insurance)
+        MEDICAL_CHECKUP
     }
 } 

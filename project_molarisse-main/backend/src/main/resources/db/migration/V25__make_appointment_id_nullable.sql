@@ -1,0 +1,1 @@
+ALTER TABLE appointment_document MODIFY COLUMN appointment_id INT NULL; 

@@ -216,6 +216,38 @@ public class DocumentController {
     }
     
     /**
+     * Serve any file by filename for general use (e.g., bilan document preview)
+     */
+    @GetMapping("/file/{fileName:.+}")
+    public ResponseEntity<Resource> getAnyFile(
+            @PathVariable String fileName,
+            HttpServletRequest request) {
+        System.out.println("GET /api/users/documents/file called with: " + fileName);
+        try {
+            // Load file as resource
+            Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+            // Determine content type
+            String contentType = determineContentType(resource);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(contentType));
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"");
+            headers.add("Access-Control-Allow-Origin", "*");
+            headers.add("Access-Control-Allow-Methods", "GET, OPTIONS");
+            headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            headers.add("Access-Control-Expose-Headers", "Content-Disposition");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(resource);
+        } catch (Exception e) {
+            logger.error("Error serving file: {}", e.getMessage(), e);
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    /**
      * Determine the content type of a file
      */
     private String determineContentType(Resource resource) {

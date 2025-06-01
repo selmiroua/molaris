@@ -154,7 +154,7 @@ public class PatientController {
             // Delegate to service for handling create or update logic
             FichePatient saved = fichePatientService.createOrUpdateFicheWithDocuments(patientId, fichePatient, null);
             logger.info("Successfully processed fiche update/create for patient ID: {}", patientId);
-            return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(saved);
         } catch (Exception e) {
             logger.error("Error in createOrUpdateFichePatient controller: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
