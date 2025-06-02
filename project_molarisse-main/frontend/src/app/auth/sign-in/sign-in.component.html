@@ -1,0 +1,178 @@
+<div class="login-container">
+  <!-- Left side - Dental image -->
+  <div class="image-side">
+    <div class="overlay"></div>
+    <img 
+      src="assets/images/1.jpg" 
+      alt="Dental Clinic" 
+      class="dental-image" 
+      (error)="handleImageError($event)">
+   <div class="light-effects">
+      <div class="light-spot"></div>
+      <div class="light-spot"></div>
+    </div>
+    <div class="brand-overlay">
+      <div class="logo-container">
+        <div class="logo-background">
+          <img src="assets/images/molarisse.png" alt="Molarisse Logo" class="tooth-logo">
+        </div>
+      </div>
+      <h1 class="brand-name">Molaris</h1>
+      <p class="brand-tagline">Votre partenaire de confiance en santé dentaire</p>
+    </div>
+  </div>
+  
+  <!-- Right side - Sign-in form -->
+  <div class="form-side">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>S'inscrire</h2>
+        <p class="welcome-text">Créez votre compte sur la plateforme</p>
+      </div>
+      
+      <!-- Error message -->
+      <div *ngIf="registerError" class="error-message">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <div class="error-content">
+          <p>{{ registerError }}</p>
+        </div>
+      </div>
+      
+      <!-- Modern Sign-up Form Card -->
+      <form [formGroup]="signInForm" (ngSubmit)="onSubmit()" class="auth-form modern-form">
+        <!-- Role Selection -->
+        <mat-form-field appearance="outline" floatLabel="always" class="modern-field">
+          <mat-label><b>Vous êtes*</b></mat-label>
+          <mat-icon matPrefix>assignment_ind</mat-icon>
+          <mat-select formControlName="role" (selectionChange)="selectRole($event.value)" placeholder="Sélectionnez votre rôle">
+            <mat-select-trigger>
+              <div class="role-select-trigger" *ngIf="selectedRole">
+                <mat-icon>{{ getRoleIcon(selectedRole) }}</mat-icon>
+                <span>{{ getRoleDisplayName(selectedRole) }}</span>
+              </div>
+            </mat-select-trigger>
+            <mat-option *ngFor="let role of roleOptions" [value]="role.value">
+              <div class="role-option">
+                <mat-icon>{{ role.icon }}</mat-icon>
+                <span>{{ role.displayName }}</span>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="signInForm.get('role')?.invalid && signInForm.get('role')?.touched">
+            Rôle requis
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Name Fields Row -->
+        <div class="modern-row">
+          <mat-form-field appearance="outline" floatLabel="always" class="modern-field">
+            <mat-label><b>Nom*</b></mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="nom" placeholder="Entrez votre nom">
+            <mat-error *ngIf="signInForm.get('nom')?.hasError('required')">
+              Requis
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" floatLabel="always" class="modern-field">
+            <mat-label><b>Prénom*</b></mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="prenom" placeholder="Entrez votre prénom">
+            <mat-error *ngIf="signInForm.get('prenom')?.hasError('required')">
+              Requis
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Email Field -->
+        <mat-form-field appearance="outline" floatLabel="always" class="modern-field">
+          <mat-label><b>Email*</b></mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput formControlName="email" type="email" placeholder="Entrez votre email">
+          <mat-error *ngIf="signInForm.get('email')?.hasError('required')">
+            Requis
+          </mat-error>
+          <mat-error *ngIf="signInForm.get('email')?.hasError('email')">
+            Format invalide
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password Fields Row -->
+        <div class="modern-row">
+          <mat-form-field appearance="outline" floatLabel="always" class="modern-field">
+            <mat-label><b>Mot de passe*</b></mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Mot de passe">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" aria-label="Toggle password visibility">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="signInForm.get('password')?.hasError('required')">
+              Requis
+            </mat-error>
+            <mat-error *ngIf="signInForm.get('password')?.hasError('minlength')">
+              Min 6 caractères
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" floatLabel="always" class="modern-field">
+            <mat-label><b>Confirmer*</b></mat-label>
+            <mat-icon matPrefix>lock_clock</mat-icon>
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" placeholder="Confirmez le mot de passe">
+            <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button" aria-label="Toggle password visibility">
+              <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="signInForm.get('confirmPassword')?.hasError('required')">
+              Requis
+            </mat-error>
+            <mat-error *ngIf="signInForm.hasError('mismatch')">
+              Non identiques
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="password-strength-section" *ngIf="signInForm.get('password')?.value">
+          <div class="password-strength-bar">
+            <div class="strength-bar" [ngStyle]="{ 'background': passwordStrength.color }"></div>
+            <span class="strength-label" [ngStyle]="{ 'color': passwordStrength.color }">{{ passwordStrength.level }}</span>
+          </div>
+          <div class="password-requirements" *ngIf="passwordStrength.level !== 'Fort'">
+            <span>Utilisez un mot de passe fort : 8 caractères, majuscule, minuscule, chiffre, et symbole.</span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button mat-raised-button type="submit" [disabled]="!signInForm.valid || isLoading || passwordStrength.level === 'Faible'" class="login-button modern-btn">
+          <div class="button-content">
+            <mat-spinner *ngIf="isLoading" diameter="20" class="spinner-button"></mat-spinner>
+            <span *ngIf="!isLoading">
+              <span class="btn-text">S'inscrire</span>
+              <mat-icon class="login-icon">person_add</mat-icon>
+            </span>
+          </div>
+        </button>
+      </form>
+
+      <div class="footer-actions">
+        <div class="account-actions">
+          <div class="auth-footer">
+            <p>Vous avez déjà un compte? <a routerLink="/login" class="login-link">Se connecter</a></p>
+          </div>
+        </div>
+
+        <div class="social-login">
+          <div class="divider">
+            <span>Ou inscrivez-vous avec</span>
+          </div>
+          <div class="social-buttons">
+            <button mat-mini-fab (click)="signInWithGoogle()" aria-label="S'inscrire avec Google" class="google-btn">
+              <i class="fab fa-google"></i>
+            </button>
+            <button mat-mini-fab (click)="signInWithApple()" aria-label="S'inscrire avec Apple" class="apple-btn">
+              <i class="fab fa-apple"></i>
+            </button>
+            <button mat-mini-fab (click)="signInWithFacebook()" aria-label="S'inscrire avec Facebook" class="facebook-btn">
+              <i class="fab fa-facebook-f"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

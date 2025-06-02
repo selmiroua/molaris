@@ -1,0 +1,584 @@
+/* Variables */
+$primary-color: #378392;
+$primary-dark: #205a63;
+$secondary-color: #90caf9;
+$success-color: #4caf50;
+$error-color: #f44336;
+$text-color: #333;
+$text-secondary: #666;
+$border-color: #e0e0e0;
+$hover-color: rgba(55, 131, 146, 0.1);
+$transition: all 0.2s ease;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$mobile-breakpoint: 768px;
+$small-mobile-breakpoint: 480px;
+
+/* Doctor List Table Styles */
+.book-appointment-container {
+  padding: 20px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  
+  @media (max-width: $mobile-breakpoint) {
+    padding: 15px 10px;
+  }
+}
+
+.filter-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: $box-shadow;
+  
+  @media (max-width: $mobile-breakpoint) {
+    padding: 15px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $primary-dark;
+    margin: 0;
+    
+    @media (max-width: $mobile-breakpoint) {
+      font-size: 1.1rem;
+    }
+  }
+
+  .sort-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    span {
+      color: $text-secondary;
+      font-weight: 500;
+    }
+
+    mat-select {
+      width: 140px;
+    }
+  }
+  
+  @media (max-width: $mobile-breakpoint) {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    h2 {
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .clear-filter-button {
+    align-self: center;
+    
+    @media (max-width: $mobile-breakpoint) {
+      width: 100%;
+      margin-top: 8px;
+    }
+  }
+}
+
+/* Active filters with chips styling */
+.active-filters-container {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.active-filters-label {
+  font-size: 0.9rem;
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+.active-filters-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  
+  mat-chip-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.filter-chip {
+  background-color: #e3f2fd !important;
+  color: $primary-dark !important;
+  font-weight: 500 !important;
+  border: 1px solid #bbdefb !important;
+  transition: $transition;
+  
+  &:hover {
+    background-color: #bbdefb !important;
+  }
+  
+  &.ville-chip {
+    background-color: #e8f5e9 !important;
+    border-color: #c8e6c9 !important;
+    
+    &:hover {
+      background-color: #c8e6c9 !important;
+    }
+  }
+  
+  &.specialite-chip {
+    background-color: #e3f2fd !important;
+    border-color: #bbdefb !important;
+    
+    &:hover {
+      background-color: #bbdefb !important;
+    }
+  }
+  
+  mat-icon {
+    opacity: 0.7;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    margin-left: 4px;
+  }
+}
+
+/* Table container */
+.doctors-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+/* Desktop Styles - only show on desktop */
+.doctors-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  thead {
+    background: #f3f9fa;
+    
+    th {
+      padding: 15px 20px;
+      text-align: left;
+      color: $primary-dark;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-bottom: 1px solid $border-color;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: $transition;
+      
+      &:hover {
+        background-color: $hover-color;
+      }
+      
+      &:not(:last-child) {
+        border-bottom: 1px solid $border-color;
+      }
+    }
+    
+    td {
+      padding: 15px 20px;
+      vertical-align: middle;
+      color: $text-color;
+    }
+  }
+}
+
+/* Mobile cards - Only visible on mobile */
+.mobile-doctor-cards {
+  display: none;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  
+  .doctor-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid $border-color;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: $transition;
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .doctor-card-header {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid $border-color;
+      background-color: #f8fafc;
+      
+      .doctor-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .doctor-avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          overflow: hidden;
+          background: #e3f2fd;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+        
+        .doctor-name-container {
+          display: flex;
+          flex-direction: column;
+          
+          .doctor-name {
+            font-weight: 600;
+            color: $primary-dark;
+            font-size: 1rem;
+            margin-bottom: 3px;
+          }
+          
+          .doctor-specialty {
+            font-size: 0.8rem;
+            color: $text-secondary;
+          }
+        }
+      }
+      
+      .mobile-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
+    }
+    
+    .doctor-card-body {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .doctor-location {
+        display: flex;
+        align-items: center;
+        color: $text-secondary;
+        font-size: 0.9rem;
+      }
+      
+      .mobile-book-button {
+        padding: 6px 15px;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+/* Table column widths */
+.doctor-col {
+  width: 30%;
+}
+
+.specialite-col {
+  width: 25%;
+}
+
+.ville-col {
+  width: 15%;
+}
+
+.status-col {
+  width: 15%;
+}
+
+.action-col {
+  width: 15%;
+}
+
+/* Doctor information styles */
+.doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.doctor-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e3f2fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.doctor-name-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.doctor-name {
+  font-weight: 600;
+  color: $primary-dark;
+  font-size: 1rem;
+}
+
+/* Status badge */
+.availability-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background-color: #e8f5e9;
+  color: $success-color;
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    display: inline-block;
+    
+    &.available {
+      background-color: $success-color;
+    }
+    
+    &.unavailable {
+      background-color: $error-color;
+    }
+  }
+  
+  &.unavailable {
+    background-color: #fff5f5;
+    color: $error-color;
+  }
+}
+
+/* Action button styling */
+.book-button {
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: $transition;
+  cursor: pointer;
+  
+  &:hover {
+    background: $primary-dark;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(55, 131, 146, 0.3);
+  }
+  
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+/* Location icon */
+.location-icon {
+  color: $secondary-color;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* Empty state styling */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  text-align: center;
+  
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: #bdbdbd;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: $text-secondary;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    color: $primary-color;
+  }
+  
+  @media (max-width: $mobile-breakpoint) {
+    padding: 30px 15px;
+    
+    mat-icon {
+      font-size: 36px;
+      height: 36px;
+      width: 36px;
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Loading state styling */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  
+  p {
+    margin-top: 16px;
+    color: $primary-color;
+    font-size: 1rem;
+  }
+  
+  mat-spinner {
+    ::ng-deep circle {
+      stroke: $primary-color;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: $mobile-breakpoint) {
+  // Hide desktop table on mobile
+  .desktop-only {
+    display: none !important;
+  }
+  
+  // Show mobile cards on mobile
+  .mobile-doctor-cards {
+    display: flex;
+  }
+  
+  // Adjust filter controls
+  .filter-controls {
+    flex-direction: column;
+    gap: 10px;
+    
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+/* Styles for search input in dropdown */
+.search-input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 0 16px;
+  
+  ::ng-deep .mat-mdc-form-field-infix {
+    padding: 8px 0 !important;
+  }
+  
+  ::ng-deep .mat-mdc-form-field-flex {
+    background-color: #f5f5f5 !important;
+  }
+  
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+/* Highlight filtered options */
+::ng-deep .mat-mdc-option {
+  &.filtered-option {
+    font-weight: 500;
+    background-color: rgba($primary-color, 0.05);
+  }
+}
+
+/* Override MatChipSet styles */
+::ng-deep .mdc-evolution-chip-set__chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+/* Mobile-specific chip adjustments */
+@media (max-width: $mobile-breakpoint) {
+  .filter-chip {
+    font-size: 0.8rem !important;
+    height: 28px !important;
+    
+    mat-icon {
+      font-size: 16px !important;
+      height: 16px !important;
+      width: 16px !important;
+    }
+  }
+}

@@ -1,0 +1,63 @@
+<div class="auth-container">
+  <div class="auth-card">
+    
+    <div class="logo-container">
+      <div class="logo-img-container">
+        <img src="assets/images/molarisse.png" alt="Molarisse Logo" class="tooth-logo">
+        <div class="shine-effect"></div>
+      </div>
+    </div>
+    
+    <h2>Activation du compte</h2>
+    
+    <div *ngIf="!success && !loading">
+      <p class="instructions">
+        Veuillez saisir le code d'activation reçu par email pour activer votre compte.
+      </p>
+
+      <form [formGroup]="activationForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Code d'activation</mat-label>
+          <input matInput formControlName="code" placeholder="Entrez votre code d'activation">
+          <mat-icon matPrefix>vpn_key</mat-icon>
+          <mat-error *ngIf="activationForm.get('code')?.hasError('required')">
+            Code d'activation requis
+          </mat-error>
+        </mat-form-field>
+
+        <div class="action-buttons">
+          <button mat-stroked-button type="button" (click)="backToLogin()">
+            Retour
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!activationForm.valid || loading">
+            <span *ngIf="!loading">Activer le compte</span>
+            <span *ngIf="loading">Activation...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Message de chargement -->
+    <div *ngIf="loading" class="loading-message">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Activation de votre compte en cours...</p>
+    </div>
+    
+    <!-- Message de succès -->
+    <div *ngIf="success" class="success-message">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <h3>Compte activé avec succès!</h3>
+      <p>
+        Votre compte a été activé avec succès.
+      </p>
+      <p>
+        Vous pouvez maintenant vous connecter avec vos identifiants.
+      </p>
+      <div class="action-buttons single-button">
+        <button mat-raised-button color="primary" (click)="backToLogin()">
+          Se connecter
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

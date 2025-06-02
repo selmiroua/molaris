@@ -1,0 +1,1 @@
+ALTER TABLE fiche_patient ADD COLUMN document_upload_date DATETIME; 

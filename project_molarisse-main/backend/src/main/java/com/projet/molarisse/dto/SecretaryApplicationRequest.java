@@ -1,0 +1,15 @@
+package com.projet.molarisse.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class SecretaryApplicationRequest {
+    private Integer doctorId;
+    private String message; // Optional message from secretary to doctor
+} 

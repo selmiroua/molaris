@@ -1,0 +1,107 @@
+<div class="doctor-application-container">
+  <div class="application-header">
+    <h2>Doctor Application</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Status Card -->
+    <div class="status-card" *ngIf="secretaryStatus">
+      <div class="status-card-content" [ngClass]="secretaryStatus.toLowerCase()">
+        <mat-icon *ngIf="secretaryStatus === 'APPROVED'">check_circle</mat-icon>
+        <mat-icon *ngIf="secretaryStatus === 'PENDING'">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="secretaryStatus === 'REJECTED'">cancel</mat-icon>
+        <h3>Your application is {{ secretaryStatus.toLowerCase() }}</h3>
+        <p *ngIf="secretaryStatus === 'APPROVED'">You are now a secretary for a doctor.</p>
+        <p *ngIf="secretaryStatus === 'PENDING'">Your application is being reviewed. Please check back later.</p>
+        <p *ngIf="secretaryStatus === 'REJECTED'">Your application was not accepted. You may try again.</p>
+      </div>
+    </div>
+
+    <!-- Application Form -->
+    <div class="application-form-container" *ngIf="!secretaryStatus || secretaryStatus === 'REJECTED'">
+      <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()">
+        <div class="form-section">
+          <h3>Apply to be a Doctor's Secretary</h3>
+          
+          <!-- Doctor Selection -->
+          <div class="doctor-selection">
+            <h4>Available Doctors</h4>
+            
+            <div *ngIf="doctors.length === 0" class="no-doctors">
+              <p>No doctors available at the moment. Please check back later.</p>
+            </div>
+            
+            <div *ngIf="doctors.length > 0" class="doctors-list">
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Select a Doctor</mat-label>
+                <mat-select formControlName="doctorId">
+                  <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
+                    Dr. {{ doctor.firstName }} {{ doctor.lastName }} - {{ doctor.speciality }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="doctorIdControl?.invalid && doctorIdControl?.touched">
+                  Please select a doctor
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          
+          <!-- Application Message -->
+          <div class="application-message">
+            <h4>Why do you want to work with this doctor?</h4>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Your message</mat-label>
+              <textarea matInput formControlName="message" rows="5" placeholder="Explain why you'd be a good fit..."></textarea>
+              <mat-hint align="end">{{ messageControl?.value?.length || 0 }}/500</mat-hint>
+              <mat-error *ngIf="messageControl?.hasError('required') && messageControl?.touched">
+                Message is required
+              </mat-error>
+              <mat-error *ngIf="messageControl?.hasError('minlength')">
+                Message must be at least 10 characters
+              </mat-error>
+              <mat-error *ngIf="messageControl?.hasError('maxlength')">
+                Message cannot exceed 500 characters
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <!-- CV Upload -->
+          <div class="cv-upload">
+            <h4>Upload your CV (optional)</h4>
+            <div class="file-upload-container">
+              <button type="button" mat-raised-button color="primary" (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon>
+                Select File
+              </button>
+              <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept=".pdf,.doc,.docx">
+              
+              <div *ngIf="fileName" class="selected-file">
+                <span>{{ fileName }}</span>
+                <button type="button" mat-icon-button color="warn" (click)="clearSelectedFile()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <p class="file-hint">Accepted formats: PDF, DOC, DOCX</p>
+            </div>
+          </div>
+          
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="submit" mat-raised-button color="primary" [disabled]="applicationForm.invalid || loading">
+              <mat-icon>send</mat-icon>
+              Submit Application
+            </button>
+            <button type="button" mat-button (click)="resetForm()">
+              Reset
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-container>
+</div> 

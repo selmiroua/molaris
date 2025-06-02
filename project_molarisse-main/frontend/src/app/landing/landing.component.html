@@ -1,0 +1,176 @@
+<div class="landing-container">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="assets/images/logo.png" alt="Molarisse Logo" class="logo-img">
+        <a href="/" class="logo-text">Molarisse</a>
+      </div>
+      <nav class="main-nav">
+        <a href="#services" class="nav-link">
+          <mat-icon>medical_services</mat-icon>
+          Services
+        </a>
+        <a href="#doctors" class="nav-link">
+          <mat-icon>people</mat-icon>
+          Nos Médecins
+        </a>
+        <a href="#testimonials" class="nav-link">
+          <mat-icon>star</mat-icon>
+          Témoignages
+        </a>
+        <a href="#contact" class="nav-link">
+          <mat-icon>location_on</mat-icon>
+          Contact
+        </a>
+        <a routerLink="/espace-sec" class="nav-link secretary-link" style="cursor: pointer;">
+          <mat-icon>admin_panel_settings</mat-icon>
+          Espace Secrétaire
+        </a>
+      </nav>
+      <div class="auth-buttons">
+        <button mat-button class="login-link" (click)="navigateToLogin()">
+          <mat-icon>login</mat-icon>
+          Connexion
+        </button>
+        <button mat-raised-button color="accent" class="register-button" (click)="navigateToSignIn()">
+          <mat-icon>person_add</mat-icon>
+          Inscription
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Molarisse</h1>
+        <p class="hero-subtitle">Votre clinique dentaire de confiance, offrant des soins de qualité et un service personnalisé pour toute la famille.</p>
+        <button mat-raised-button class="connect-button" (click)="navigateToLogin()">
+          <mat-icon>login</mat-icon>
+          Se Connecter
+        </button>
+      </div>
+      <div class="hero-image">
+        <img [src]="heroImage" alt="Clinique dentaire moderne" class="hero-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="services-section">
+    <h2 class="section-title">Nos Services</h2>
+    <div class="services-grid">
+      <mat-card class="service-card">
+        <div class="service-icon">
+          <mat-icon>medical_services</mat-icon>
+        </div>
+        <h3>Dentisterie Générale</h3>
+        <p>Soins dentaires complets pour toute la famille, incluant les examens de routine, les nettoyages et les traitements de base.</p>
+        <button mat-button color="primary" class="service-button">
+          En savoir plus
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+      <mat-card class="service-card">
+        <div class="service-icon">
+          <mat-icon>spa</mat-icon>
+        </div>
+        <h3>Dentisterie Esthétique</h3>
+        <p>Transformez votre sourire avec nos traitements esthétiques, incluant le blanchiment, les facettes et les implants dentaires.</p>
+        <button mat-button color="primary" class="service-button">
+          En savoir plus
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+      <mat-card class="service-card">
+        <div class="service-icon">
+          <mat-icon>straighten</mat-icon>
+        </div>
+        <h3>Orthodontie</h3>
+        <p>Correction de l'alignement des dents pour un sourire parfait et une meilleure santé bucco-dentaire.</p>
+        <button mat-button color="primary" class="service-button">
+          En savoir plus
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+    </div>
+  </section>
+
+  <!-- Doctors Section -->
+  <section id="doctors" class="doctors-section">
+    <div class="section-header">
+      <h2>Nos Dentistes</h2>
+      <p class="section-subtitle">Une équipe de professionnels dévoués à votre santé bucco-dentaire</p>
+    </div>
+    <div class="doctors-grid">
+      <mat-card class="doctor-card">
+        <div class="doctor-image">
+          <img src="assets/images/doctor1.jpg" alt="Dr. Jean Dupont">
+          <div class="doctor-overlay">
+            <div class="social-links">
+              <a href="#"><mat-icon>facebook</mat-icon></a>
+              <a href="#"><mat-icon>linkedin</mat-icon></a>
+            </div>
+          </div>
+        </div>
+        <div class="doctor-info">
+          <h3>Dr. Jean Dupont</h3>
+          <p class="specialty">Dentisterie Générale</p>
+          <p>Spécialiste en dentisterie générale avec plus de 15 ans d'expérience.</p>
+        </div>
+      </mat-card>
+      <mat-card class="doctor-card">
+        <div class="doctor-image">
+          <img src="assets/images/doctor2.jpg" alt="Dr. Marie Martin">
+          <div class="doctor-overlay">
+            <div class="social-links">
+              <a href="#"><mat-icon>facebook</mat-icon></a>
+              <a href="#"><mat-icon>linkedin</mat-icon></a>
+            </div>
+          </div>
+        </div>
+        <div class="doctor-info">
+          <h3>Dr. Marie Martin</h3>
+          <p class="specialty">Orthodontie</p>
+          <p>Spécialiste en orthodontie, experte en alignement dentaire invisible.</p>
+        </div>
+      </mat-card>
+      <mat-card class="doctor-card">
+        <div class="doctor-image">
+          <img src="assets/images/doctor3.jpg" alt="Dr. Pierre Dubois">
+          <div class="doctor-overlay">
+            <div class="social-links">
+              <a href="#"><mat-icon>facebook</mat-icon></a>
+              <a href="#"><mat-icon>linkedin</mat-icon></a>
+            </div>
+          </div>
+        </div>
+        <div class="doctor-info">
+          <h3>Dr. Pierre Dubois</h3>
+          <p class="specialty">Dentisterie Esthétique</p>
+          <p>Spécialiste en dentisterie esthétique et implants dentaires.</p>
+        </div>
+      </mat-card>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section id="contact" class="cta-section">
+    <div class="cta-content">
+      <h2>Prêt à prendre rendez-vous ?</h2>
+      <p>Prenez rendez-vous en ligne ou contactez-nous pour une consultation</p>
+      <div class="cta-buttons">
+        <button mat-raised-button class="cta-button" (click)="navigateToLogin()">
+          <mat-icon>event</mat-icon>
+          Réserver Maintenant
+        </button>
+        <button mat-stroked-button class="contact-button">
+          <mat-icon>phone</mat-icon>
+          Nous Contacter
+        </button>
+      </div>
+    </div>
+  </section>
+</div> 

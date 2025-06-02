@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="10" fill="#F0F9FF" />
+  
+  <!-- Building/Clinic -->
+  <rect x="110" y="80" width="180" height="150" rx="8" fill="#FFFFFF" stroke="#0EA5E9" stroke-width="2" />
+  
+  <!-- Roof -->
+  <path d="M100 80L200 40L300 80" stroke="#0EA5E9" stroke-width="3" fill="none" stroke-linejoin="round" />
+  
+  <!-- Door -->
+  <rect x="180" y="180" width="40" height="50" rx="4" fill="#0EA5E9" />
+  <circle cx="190" cy="205" r="3" fill="#FFFFFF" />
+  
+  <!-- Windows -->
+  <rect x="140" y="100" width="40" height="40" rx="4" fill="#BAE6FD" />
+  <rect x="220" y="100" width="40" height="40" rx="4" fill="#BAE6FD" />
+  <rect x="140" y="160" width="25" height="25" rx="2" fill="#BAE6FD" />
+  <rect x="235" y="160" width="25" height="25" rx="2" fill="#BAE6FD" />
+  
+  <!-- Window frames -->
+  <path d="M140 120H180" stroke="#FFFFFF" stroke-width="2" />
+  <path d="M160 100V140" stroke="#FFFFFF" stroke-width="2" />
+  <path d="M220 120H260" stroke="#FFFFFF" stroke-width="2" />
+  <path d="M240 100V140" stroke="#FFFFFF" stroke-width="2" />
+  
+  <!-- Dental symbol -->
+  <circle cx="200" cy="60" r="15" fill="#0284C7" />
+  <path d="M193 60H207" stroke="white" stroke-width="2" stroke-linecap="round" />
+  <path d="M200 53V67" stroke="white" stroke-width="2" stroke-linecap="round" />
+  <path d="M195 55L205 65" stroke="white" stroke-width="2" stroke-linecap="round" />
+  <path d="M205 55L195 65" stroke="white" stroke-width="2" stroke-linecap="round" />
+  
+  <!-- Upload indicator -->
+  <circle cx="320" cy="60" r="30" fill="#8edaff" />
+  <path d="M320 75V45" stroke="#0284C7" stroke-width="4" stroke-linecap="round" />
+  <path d="M305 60L320 45L335 60" stroke="#0284C7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg> 

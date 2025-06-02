@@ -1,0 +1,36 @@
+<div class="banned-container">
+  <mat-card class="banned-card">
+    <div class="icon-container">
+      <mat-icon class="banned-icon">block</mat-icon>
+    </div>
+    
+    <mat-card-title>Compte bloqué</mat-card-title>
+    
+    <mat-card-content>
+      <p class="greeting" *ngIf="userName">Bonjour, <strong>{{ userName }}</strong></p>
+      <p class="email" *ngIf="userEmail">Compte: <strong>{{ userEmail }}</strong></p>
+      <p class="message">Votre compte a été suspendu ou verrouillé.</p>
+      <p>Cela peut être dû à diverses raisons :</p>
+      <ul>
+        <li>Trop de tentatives de connexion échouées</li>
+        <li>Non-respect des conditions d'utilisation</li>
+        <li>Activité suspecte détectée sur votre compte</li>
+        <li>À la demande d'une autorité compétente</li>
+        <li>Violation des règles de la plateforme</li>
+      </ul>
+      <p>Pour plus d'informations ou pour contester cette décision, veuillez contacter l'administrateur.</p>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="goToMessaging()">
+        <mat-icon>message</mat-icon>
+        Contacter l'administrateur
+      </button>
+      
+      <button mat-button color="warn" (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        Se déconnecter
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
