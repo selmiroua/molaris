@@ -1,0 +1,135 @@
+<div class="user-management-container">
+  <div class="user-management-header">
+    <h2>Gestion des utilisateurs</h2>
+    <p>Liste complète des utilisateurs de la plateforme</p>
+  </div>
+
+  <div class="user-management-actions">
+    <mat-form-field class="search-field">
+      <mat-label>Rechercher un utilisateur</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Nom, email ou rôle...">
+      <button *ngIf="searchControl.value" matSuffix mat-icon-button aria-label="Effacer" (click)="searchControl.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Chargement des utilisateurs...</p>
+  </div>
+
+  <div class="users-table-container mat-elevation-z2" *ngIf="!isLoading">
+    <table mat-table [dataSource]="users" matSort>
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let user"> {{user.id}} </td>
+      </ng-container>
+
+      <!-- Profile Picture Column -->
+      <ng-container matColumnDef="profilePicture">
+        <th mat-header-cell *matHeaderCellDef> Photo </th>
+        <td mat-cell *matCellDef="let user"> 
+          <div class="profile-picture-container">
+            <img [src]="getProfilePictureUrl(user)" 
+                 alt="Photo de profil" 
+                 class="profile-picture"
+                 (error)="handleImageError($event)">
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Full Name Column -->
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef> Nom complet </th>
+        <td mat-cell *matCellDef="let user"> 
+          <div class="user-info">
+            <span class="user-name">{{user.fullName || (user.prenom + ' ' + user.nom)}}</span>
+            <span class="verification-badge" *ngIf="user.isVerified" matTooltip="Utilisateur vérifié">
+              <mat-icon>verified_user</mat-icon>
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let user"> {{user.email}} </td>
+      </ng-container>
+
+      <!-- Role Column -->
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef> Rôle </th>
+        <td mat-cell *matCellDef="let user"> 
+          <span class="role-chip" [ngClass]="getRoleClass(user.role)">
+            {{user.role?.nom || user.role}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Statut </th>
+        <td mat-cell *matCellDef="let user"> 
+          <span class="status-chip" [ngClass]="getStatusClass(user.banned ? 'banned' : user.status)">
+            {{user.banned ? 'Banni' : user.status}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Created At Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef> Date d'inscription </th>
+        <td mat-cell *matCellDef="let user"> {{formatDate(user.creationDate)}} </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions utilisateur">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            
+            <mat-divider></mat-divider>
+            <button mat-menu-item *ngIf="!user.banned" (click)="banUser(user)" class="ban-action">
+              <mat-icon>gavel</mat-icon>
+              <span>Bannir</span>
+            </button>
+            <button mat-menu-item *ngIf="user.banned" (click)="unbanUser(user)" class="unban-action">
+              <mat-icon>undo</mat-icon>
+              <span>Débannir</span>
+            </button>
+            <mat-divider></mat-divider>
+           
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="users.length === 0">
+      <mat-icon>people_outline</mat-icon>
+      <h3>Aucun utilisateur trouvé</h3>
+      <p>Essayez de modifier vos critères de recherche</p>
+    </div>
+
+    <mat-paginator 
+      [length]="totalUsers"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="pageIndex"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

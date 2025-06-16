@@ -1,0 +1,257 @@
+.user-management-container {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.user-management-header {
+  margin-bottom: 20px;
+  text-align: center;
+  
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.user-management-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .search-field {
+    width: 400px;
+    max-width: 100%;
+  }
+  
+  .add-user-btn {
+    height: 36px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.users-table-container {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  
+  table {
+    width: 100%;
+  }
+  
+  .mat-mdc-row:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .mat-column-id {
+    width: 60px;
+    text-align: center;
+  }
+  
+  .mat-column-profilePicture {
+    width: 80px;
+    text-align: center;
+  }
+  
+  .mat-column-actions {
+    width: 60px;
+    text-align: center;
+  }
+}
+
+.profile-picture-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  
+  .user-name {
+    margin-right: 8px;
+  }
+  
+  .verification-badge {
+    display: inline-flex;
+    
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+      color: #4CAF50;
+    }
+  }
+}
+
+// Status chip styles
+.status-chip {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-active {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+}
+
+.status-inactive {
+  background-color: rgba(158, 158, 158, 0.1);
+  color: #757575;
+}
+
+.status-suspended {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+}
+
+.status-banned {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000000;
+  font-weight: bold;
+}
+
+// Role chip styles
+.role-chip {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.role-admin {
+  background-color: rgba(63, 81, 181, 0.1);
+  color: #3F51B5;
+}
+
+.role-doctor {
+  background-color: rgba(0, 150, 136, 0.1);
+  color: #009688;
+}
+
+.role-patient {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #FF9800;
+}
+
+.role-secretary {
+  background-color: rgba(156, 39, 176, 0.1);
+  color: #9C27B0;
+}
+
+// Empty state
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 0 0 8px;
+  }
+  
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+// Delete action
+.delete-action {
+  color: #F44336;
+}
+
+// Ban/unban actions
+.ban-action {
+  color: #000000;
+}
+
+.unban-action {
+  color: #4CAF50;
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .user-management-actions {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .search-field {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    .add-user-btn {
+      width: 100%;
+    }
+  }
+  
+  .mat-column-id,
+  .mat-column-createdAt {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-column-status {
+    display: none;
+  }
+}

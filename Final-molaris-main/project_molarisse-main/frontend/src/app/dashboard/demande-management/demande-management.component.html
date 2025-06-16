@@ -1,0 +1,206 @@
+<div class="container">
+  <div class="header">
+    <h1>Demande Management</h1>
+    <button class="back-button" routerLink="/dashboard/admin">
+      <i class="fas fa-arrow-left"></i>
+      Back to Admin Dashboard
+    </button>
+  </div>
+
+  <div class="content">
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <div *ngIf="loading" class="loading-message">
+      <i class="fas fa-spinner fa-spin"></i>
+      Loading demandes...
+    </div>
+
+    <div *ngIf="!loading && !error" class="demandes-table-container">
+      <table class="demandes-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>City</th>
+            <th>Speciality</th>
+            <th>Experience</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let demande of demandes">
+            <td>{{ demande.prenom }} {{ demande.nom }}</td>
+            <td>{{ demande.email }}</td>
+            <td>{{ demande.telephone }}</td>
+            <td>{{ demande.ville }}</td>
+            <td>{{ demande.specialite }}</td>
+            <td>{{ demande.anneeExperience }} years</td>
+            <td>
+              <span class="status-badge" [class]="'status-' + demande.status.toLowerCase()">
+                {{ demande.status }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="action-button view" (click)="viewDemandeDetails(demande)" matTooltip="View Details">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button *ngIf="demande.status === 'PENDING'"
+                      class="action-button accept"
+                      (click)="acceptDemande(demande.id)"
+                      matTooltip="Accept">
+                <i class="fas fa-check"></i>
+              </button>
+              <button *ngIf="demande.status === 'PENDING'"
+                      class="action-button reject"
+                      (click)="refuseDemande(demande.id)"
+                      matTooltip="Reject">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal" *ngIf="selectedDemande" (click)="closeModal($event)">
+  <div class="modal-content">
+    <button class="close-btn" (click)="closeModal($event)">
+      <i class="fas fa-times"></i>
+    </button>
+    <h2>Demande Details</h2>
+
+    <div class="modal-body">
+      <div class="info-section">
+        <h3>Personal Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Name:</label>
+            <span>{{ selectedDemande.prenom }} {{ selectedDemande.nom }}</span>
+          </div>
+          <div class="info-item">
+            <label>Email:</label>
+            <span>{{ selectedDemande.email }}</span>
+          </div>
+          <div class="info-item">
+            <label>Phone:</label>
+            <span>{{ selectedDemande.telephone }}</span>
+          </div>
+          <div class="info-item">
+            <label>Address:</label>
+            <span>{{ selectedDemande.adresse }}</span>
+          </div>
+          <div class="info-item">
+            <label>City:</label>
+            <span>{{ selectedDemande.ville }}</span>
+          </div>
+          <div class="info-item">
+            <label>Postal Code:</label>
+            <span>{{ selectedDemande.codePostal }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3>Professional Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Years of Experience:</label>
+            <span>{{ selectedDemande.anneeExperience }}</span>
+          </div>
+          <div class="info-item">
+            <label>Speciality:</label>
+            <span>{{ selectedDemande.specialite }}</span>
+          </div>
+          <div class="info-item" *ngIf="selectedDemande.autreSpecialite">
+            <label>Other Speciality:</label>
+            <span>{{ selectedDemande.autreSpecialite }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="selectedDemande.aCabinet">
+        <h3>Cabinet Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Cabinet Name:</label>
+            <span>{{ selectedDemande.nomCabinet }}</span>
+          </div>
+          <div class="info-item">
+            <label>Cabinet Address:</label>
+            <span>{{ selectedDemande.adresseCabinet }}</span>
+          </div>
+          <div class="info-item">
+            <label>Cabinet City:</label>
+            <span>{{ selectedDemande.villeCabinet }}</span>
+          </div>
+          <div class="info-item">
+            <label>Cabinet Postal Code:</label>
+            <span>{{ selectedDemande.codePostalCabinet }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="documents-section">
+        <h3>Documents</h3>
+        <div class="documents-grid">
+          <div class="image-container" *ngIf="selectedDemande.photoPath">
+            <h4>Profile Photo</h4>
+            <div class="image-wrapper" (click)="viewFullImage(selectedDemande.photoPath)">
+              <img [src]="getImageUrl(selectedDemande.photoPath)"
+                   [attr.data-original-path]="selectedDemande.photoPath"
+                   alt="Profile Photo"
+                   (error)="handleImageError($event)">
+              <div class="image-overlay">
+                <i class="fas fa-search-plus"></i>
+                <span>Click to enlarge</span>
+              </div>
+            </div>
+          </div>
+          <div class="image-container" *ngIf="selectedDemande.photoDiplomePath">
+            <h4>Diploma</h4>
+            <div class="image-wrapper" (click)="viewFullImage(selectedDemande.photoDiplomePath)">
+              <img [src]="getImageUrl(selectedDemande.photoDiplomePath)"
+                   [attr.data-original-path]="selectedDemande.photoDiplomePath"
+                   alt="Diploma"
+                   (error)="handleImageError($event)">
+              <div class="image-overlay">
+                <i class="fas fa-search-plus"></i>
+                <span>Click to enlarge</span>
+              </div>
+            </div>
+          </div>
+          <div class="image-container" *ngIf="selectedDemande.photoCabinetPath">
+            <h4>Cabinet Photo</h4>
+            <div class="image-wrapper" (click)="viewFullImage(selectedDemande.photoCabinetPath)">
+              <img [src]="getImageUrl(selectedDemande.photoCabinetPath)"
+                   [attr.data-original-path]="selectedDemande.photoCabinetPath"
+                   alt="Cabinet Photo"
+                   (error)="handleImageError($event)">
+              <div class="image-overlay">
+                <i class="fas fa-search-plus"></i>
+                <span>Click to enlarge</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Full Image Modal -->
+<div class="full-image-modal" *ngIf="selectedImage" (click)="closeFullImage($event)">
+  <div class="full-image-content">
+    <button class="close-btn" (click)="closeFullImage($event)">
+      <i class="fas fa-times"></i>
+    </button>
+    <img [src]="selectedImage" alt="Full size image">
+  </div>
+</div>

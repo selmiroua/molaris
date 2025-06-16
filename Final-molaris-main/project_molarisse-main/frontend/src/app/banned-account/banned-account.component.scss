@@ -1,0 +1,95 @@
+.banned-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+.banned-card {
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #f44336;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.banned-icon {
+  font-size: 64px;
+  height: 64px;
+  width: 64px;
+  color: #f44336;
+}
+
+mat-card-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #f44336;
+}
+
+.greeting {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.email {
+  color: #555;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.message {
+  font-weight: 500;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+ul {
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0 0;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+button {
+  min-width: 180px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 599px) {
+  .banned-card {
+    margin: 0 10px;
+  }
+  
+  mat-card-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  button {
+    width: 100%;
+  }
+}

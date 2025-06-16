@@ -1,0 +1,35 @@
+<div class="form-container">
+    <h2 class="form-title">Validez Votre Compte</h2>
+    <p class="form-description">
+      Pour valider votre compte, veuillez télécharger les documents requis et remplir les informations nécessaires.
+    </p>
+  
+    <form (ngSubmit)="onSubmit()" [formGroup]="validateForm" class="validate-account-form">
+      <div class="form-group">
+        <label for="file">Télécharger la Certification :</label>
+        <input type="file" id="file" (change)="onFileChange($event)" required formControlName="file" class="form-control">
+      </div>
+  
+      <div *ngIf="isDoctor" class="form-group" @fadeIn>
+        <label for="specialty">Spécialité Dentaire :</label>
+        <select id="specialty" formControlName="specialty" required class="form-control">
+          <option value="">Sélectionnez une spécialité</option>
+          <option value="orthodontics">Orthodontie</option>
+          <option value="periodontics">Parodontie</option>
+          <option value="endodontics">Endodontie</option>
+          <option value="pediatric">Dentisterie Pédiatrique</option>
+          <option value="oral-surgery">Chirurgie Orale</option>
+          <option value="prosthodontics">Prothèse Dentaire</option>
+        </select>
+      </div>
+  
+      <div *ngIf="isFournisseur" class="form-group" @fadeIn>
+        <label for="patent">Télécharger le Brevet :</label>
+        <input type="file" id="patent" (change)="onPatentChange($event)" required formControlName="patent" class="form-control">
+      </div>
+  
+      <button type="submit" [disabled]="!validateForm.valid" class="btn btn-primary">
+        Soumettre
+      </button>
+    </form>
+  </div>

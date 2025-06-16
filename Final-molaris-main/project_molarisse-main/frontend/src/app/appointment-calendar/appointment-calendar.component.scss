@@ -1,0 +1,354 @@
+/* Add this at the end of the file */
+
+/* Apply custom colors from CSS variables */
+.appointment-item {
+  &.status-pending {
+    background-color: var(--status-pending-bg, #FFF8E1);
+    color: var(--status-pending-text, #000000);
+    border-left: 4px solid var(--status-pending-border, #f97316);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.status-accepted {
+    background-color: var(--status-accepted-bg, #E8F5E9);
+    color: var(--status-accepted-text, #000000);
+    border-left: 4px solid var(--status-accepted-border, #0ea5e9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.status-completed {
+    background-color: var(--status-completed-bg, #E3F2FD);
+    color: var(--status-completed-text, #000000);
+    border-left: 4px solid var(--status-completed-border, #22c55e);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.status-rejected {
+    background-color: var(--status-rejected-bg, #FFEBEE);
+    color: var(--status-rejected-text, #000000);
+    border-left: 4px solid var(--status-rejected-border, #ef4444);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.status-canceled {
+    background-color: var(--status-canceled-bg, #FAFAFA);
+    color: var(--status-canceled-text, #000000);
+    border-left: 4px solid var(--status-canceled-border, #9e9e9e);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* Enhanced Full Calendar custom styling */
+::ng-deep {
+  .fc-event {
+    border-radius: 6px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    margin: 2px 1px !important;
+    overflow: hidden !important;
+    
+    &:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12) !important;
+      z-index: 10 !important;
+    }
+  }
+  
+  /* Status-specific styling for events */
+  .fc-event.status-pending {
+    background-color: var(--status-pending-bg, #FFF8E1) !important;
+    color: var(--status-pending-text, #000000) !important;
+    border-left: 4px solid var(--status-pending-border, #f97316) !important;
+  }
+  
+  .fc-event.status-accepted {
+    background-color: var(--status-accepted-bg, #E8F5E9) !important;
+    color: var(--status-accepted-text, #000000) !important;
+    border-left: 4px solid var(--status-accepted-border, #0ea5e9) !important;
+  }
+  
+  .fc-event.status-completed {
+    background-color: var(--status-completed-bg, #E3F2FD) !important;
+    color: var(--status-completed-text, #000000) !important;
+    border-left: 4px solid var(--status-completed-border, #22c55e) !important;
+  }
+  
+  .fc-event.status-rejected {
+    background-color: var(--status-rejected-bg, #FFEBEE) !important;
+    color: var(--status-rejected-text, #000000) !important;
+    border-left: 4px solid var(--status-rejected-border, #ef4444) !important;
+  }
+  
+  .fc-event.status-canceled {
+    background-color: var(--status-canceled-bg, #FAFAFA) !important;
+    color: var(--status-canceled-text, #000000) !important;
+    border-left: 4px solid var(--status-canceled-border, #9e9e9e) !important;
+  }
+  
+  /* Calendar grid styling */
+  .fc-scrollgrid {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  .fc-col-header-cell {
+    background-color: #f8fafc !important;
+    padding: 12px 0 !important;
+    font-weight: 600 !important;
+  }
+  
+  .fc-theme-standard td, .fc-theme-standard th {
+    border-color: #e5e7eb !important;
+  }
+  
+  /* Today highlight style */
+  .fc-day-today {
+    background-color: rgba(59, 130, 246, 0.05) !important;
+  }
+  
+  /* Time slots */
+  .fc-timegrid-slot {
+    height: 48px !important;
+  }
+  
+  /* Event content style */
+  .fc-event-title {
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .fc-event-time {
+    font-size: 12px !important;
+    opacity: 0.8 !important;
+    padding: 2px 6px !important;
+  }
+  
+  /* Apply a pill style for all-day events */
+  .fc-daygrid-event {
+    border-radius: 20px !important;
+    padding: 2px 8px !important;
+  }
+  
+  /* Style the buttons in the header */
+  .fc-button-primary {
+    background-color: #4f46e5 !important;
+    border-color: #4338ca !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+    
+    &:hover {
+      background-color: #4338ca !important;
+      border-color: #3730a3 !important;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3) !important;
+    }
+  }
+  
+  /* Better now indicator */
+  .fc-timegrid-now-indicator-line {
+    border-color: #f97316 !important;
+    z-index: 5 !important;
+  }
+  
+  .fc-timegrid-now-indicator-arrow {
+    border-color: #f97316 !important;
+    z-index: 5 !important;
+  }
+}
+
+/* Custom buttons panel near calendar */
+.calendar-color-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  
+  .palette-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #2563eb;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #f8fafc;
+    }
+    
+    .palette-icon {
+      color: #2563eb;
+    }
+  }
+}
+
+/* Add responsive styles for calendar component */
+@media (max-width: 768px) {
+  ::ng-deep {
+    /* Make calendar height responsive on mobile */
+    .fc {
+      height: auto !important;
+      
+      /* Mobile toolbar adjustments */
+      .fc-toolbar {
+        flex-direction: column;
+        gap: 8px;
+        
+        .fc-toolbar-chunk {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          margin-bottom: 8px;
+        }
+      }
+      
+      /* Adjust button sizes for better touch targets */
+      .fc-button {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+        margin: 2px !important;
+        height: auto !important;
+      }
+      
+      /* Make day view more compact on mobile */
+      .fc-timegrid-slot {
+        height: 30px !important;
+      }
+      
+      /* Improve event readability on mobile */
+      .fc-event {
+        font-size: 12px !important;
+        
+        .fc-event-title {
+          white-space: normal !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+      }
+      
+      /* Month view cell adjustments */
+      .fc-daygrid-day-frame {
+        min-height: 60px !important;
+      }
+      
+      /* Week view adjustments for mobile */
+      .fc-timegrid-axis, .fc-timegrid-slot-label {
+        width: 40px !important;
+      }
+    }
+  }
+  
+  /* Make the calendar container scroll horizontally on small screens */
+  .calendar-content {
+    overflow-x: auto;
+    
+    /* Override fixed height with min-height for responsiveness */
+    div[style*="height: 600px"] {
+      height: auto !important;
+      min-height: 400px !important;
+    }
+  }
+  
+  /* Adjust header elements for mobile */
+  .calendar-header {
+    .header-content {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      
+      .header-left, .header-right {
+        width: 100%;
+        
+        .date-navigation {
+          flex-wrap: wrap;
+          justify-content: center;
+          
+          .current-date {
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin-top: 8px;
+          }
+        }
+        
+        .view-buttons {
+          width: 100%;
+          justify-content: space-between;
+          
+          button {
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Responsive styles for dialog components */
+@media (max-width: 480px) {
+  ::ng-deep {
+    /* Make dialogs better on mobile */
+    .mat-mdc-dialog-container .mdc-dialog__surface {
+      width: calc(100% - 32px) !important;
+      max-width: 100% !important;
+      max-height: calc(100% - 32px) !important;
+      
+      .mat-mdc-dialog-content {
+        max-height: 65vh !important;
+        padding: 12px !important;
+      }
+      
+      .mat-mdc-dialog-actions {
+        padding: 8px 12px !important;
+        flex-wrap: wrap;
+        
+        button {
+          flex: 1;
+          margin: 4px !important;
+        }
+      }
+    }
+  }
+} 

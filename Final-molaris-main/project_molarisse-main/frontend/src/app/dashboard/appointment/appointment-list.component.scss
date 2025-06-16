@@ -1,0 +1,29 @@
+/* Add at the end of the file */
+
+/* Apply custom colors from CSS variables for status badges */
+.status-badge {
+  &.pending {
+    background-color: var(--status-pending-bg, #FFF8E1);
+    color: var(--status-pending-text, #000000);
+  }
+
+  &.accepted {
+    background-color: var(--status-accepted-bg, #E8F5E9);
+    color: var(--status-accepted-text, #000000);
+  }
+
+  &.completed {
+    background-color: var(--status-completed-bg, #E3F2FD);
+    color: var(--status-completed-text, #000000);
+  }
+
+  &.rejected {
+    background-color: var(--status-rejected-bg, #FFEBEE);
+    color: var(--status-rejected-text, #000000);
+  }
+
+  &.canceled {
+    background-color: var(--status-canceled-bg, #FAFAFA);
+    color: var(--status-canceled-text, #000000);
+  }
+} 

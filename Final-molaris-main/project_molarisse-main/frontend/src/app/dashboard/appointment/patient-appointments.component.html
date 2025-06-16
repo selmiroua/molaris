@@ -1,0 +1,182 @@
+<div class="view-container">
+  <!-- Title header with refresh button -->
+  <div class="title-container">
+    <h2 class="view-title">Mes Rendez-vous</h2>
+    <div class="actions">
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" 
+             placeholder="Rechercher un rendez-vous..." 
+             (input)="filterAppointments($event)"
+             class="search-input">
+      </div>
+      <button mat-raised-button color="primary" class="refresh-button" (click)="loadAppointments()">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+      <button mat-raised-button color="primary" (click)="bookAppointment()">
+        <mat-icon>add</mat-icon>
+        Nouveau Rendez-vous
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="tabs-container">
+    <div class="tab-group">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'upcoming'"
+        (click)="setActiveTab('upcoming'); resetPagination()"
+      >
+        À Venir
+      </button>
+      
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'passés'"
+        (click)="setActiveTab('passés'); resetPagination()"
+      >
+        Passé
+      </button>
+      
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'annulés'"
+        (click)="setActiveTab('annulés'); resetPagination()"
+      >
+        Annulés
+      </button>
+      
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'terminés'"
+        (click)="setActiveTab('terminés'); resetPagination()"
+      >
+        Terminés
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+    <p>Chargement des rendez-vous...</p>
+        </div>
+
+  <!-- Error state -->
+        <div *ngIf="error" class="error-message">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ errorMessage }}</p>
+        </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && getFilteredAppointments().length === 0" class="empty-state">
+    <p>Aucun rendez-vous {{ activeTab === 'upcoming' ? 'à venir' : activeTab === 'passés' ? 'passé' : activeTab === 'annulés' ? 'annulé' : 'terminé' }} trouvé.</p>
+    <button *ngIf="activeTab === 'upcoming'" mat-raised-button color="primary" (click)="bookAppointment()">
+              <mat-icon>add</mat-icon>
+              Prendre un rendez-vous
+            </button>
+          </div>
+          
+  <!-- Appointment cards -->
+  <div *ngIf="!loading && !error && getFilteredAppointments().length > 0" class="appointments-list">
+          <div *ngFor="let appointment of getFilteredAppointments()" class="appointment-card">
+      <!-- Avatar and doctor info -->
+      <div class="doctor-section">
+              <!-- Display profile picture or initials placeholder -->
+        <div class="avatar doctor-profile-pic" [ngClass]="{'avatar-placeholder': !appointment.doctor?.profilePicturePath}">
+                <img *ngIf="appointment.doctor?.profilePicturePath" 
+                     [src]="getProfileImageUrl(appointment.doctor?.profilePicturePath)" 
+                     (error)="handleImageError($event)" 
+                     alt="Doctor profile picture">
+                <span *ngIf="!appointment.doctor?.profilePicturePath">
+                  {{ getDoctorInitials(appointment.doctor) }}
+                </span>
+              </div>
+              <div class="doctor-info">
+          <div class="appointment-id">#Apt{{ appointment.id }}</div>
+          <div class="doctor-name">Dr. {{ appointment.doctor?.prenom }} {{ appointment.doctor?.nom }}</div>
+          <div class="specialty">{{ appointment.doctor?.specialite || 'Médecin' }}</div>
+        </div>
+      </div>
+      
+      <!-- Appointment details -->
+      <div class="appointment-details">
+        <div class="datetime">
+          <mat-icon>event</mat-icon>
+          {{ appointment.appointmentDateTime | date:'dd/MM/yyyy' }}
+        </div>
+        <div class="time">
+          <mat-icon>schedule</mat-icon>
+          {{ appointment.appointmentDateTime | date:'HH:mm' }}
+        </div>
+        <div class="type">
+          {{ getAppointmentTypeLabel(appointment.appointmentType) }} • {{ appointment.caseType }}
+        </div>
+      </div>
+      
+      <!-- Status -->
+      <div class="status-section">
+              <div class="status-badge" [ngClass]="getStatusClass(appointment.status)">
+                {{ getStatusLabel(appointment.status) }}
+              </div>
+            </div>
+            
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button mat-icon-button matTooltip="Modifier" (click)="rescheduleAppointment(appointment)" 
+                *ngIf="appointment.status === 'PENDING' || appointment.status === 'ACCEPTED'">
+          <mat-icon>edit</mat-icon>
+        </button>
+        
+        <button mat-icon-button matTooltip="Annuler" (click)="cancelAppointment(appointment)"
+                *ngIf="appointment.status === 'PENDING' || appointment.status === 'ACCEPTED'">
+          <mat-icon>cancel</mat-icon>
+        </button>
+        
+        <button mat-raised-button color="primary" class="book-button" (click)="bookWithSameDoctor(appointment)">
+          {{ activeTab === 'terminés' ? 'Reprendre RDV' : 'Nouveau RDV' }}
+              </button>
+            </div>
+          </div>
+          </div>
+          
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="!loading && !error && totalAppointments > pageSize">
+            <mat-paginator 
+            [length]="totalAppointments"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+      [showFirstLastButtons]="true"
+            (page)="onPageChange($event)"
+      #paginator>
+          </mat-paginator>
+          </div>
+</div>
+
+<style>
+.doctor-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+.doctor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  background-color: #1976d2;
+  color: white;
+}
+</style> 

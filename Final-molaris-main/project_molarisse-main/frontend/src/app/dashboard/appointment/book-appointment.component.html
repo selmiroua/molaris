@@ -1,0 +1,161 @@
+<div class="book-appointment-container">
+  <div class="filter-section">
+    <div class="filter-header">
+      <h2>Affichage de {{ filteredDoctors.length }} Médecins Vérifiés</h2>
+    </div>
+    <div class="filter-controls">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filtrer par ville</mat-label>
+        <mat-select multiple [(ngModel)]="selectedVilles" (selectionChange)="applyFilters()">
+          <mat-form-field class="search-input" appearance="outline" *ngIf="allVilles.length > 10">
+            <mat-label>Rechercher</mat-label>
+            <input matInput [(ngModel)]="villeSearchText" (ngModelChange)="filterVilles()" 
+                  [ngModelOptions]="{standalone: true}" placeholder="Rechercher une ville">
+          </mat-form-field>
+          <mat-option *ngFor="let ville of filteredVilles" [value]="ville">{{ ville }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filtrer par spécialité</mat-label>
+        <mat-select multiple [(ngModel)]="selectedSpecialites" (selectionChange)="applyFilters()">
+          <mat-form-field class="search-input" appearance="outline" *ngIf="allSpecialites.length > 10">
+            <mat-label>Rechercher</mat-label>
+            <input matInput [(ngModel)]="specialiteSearchText" (ngModelChange)="filterSpecialites()" 
+                  [ngModelOptions]="{standalone: true}" placeholder="Rechercher une spécialité">
+          </mat-form-field>
+          <mat-option *ngFor="let specialite of filteredSpecialites" [value]="specialite">{{ specialite }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <button mat-stroked-button class="clear-filter-button" 
+              *ngIf="selectedVilles.length > 0 || selectedSpecialites.length > 0" 
+              (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon> 
+        <span class="clear-filter-text">Réinitialiser les filtres</span>
+      </button>
+    </div>
+
+    <!-- Active filters display with chips -->
+    <div class="active-filters-container" *ngIf="selectedVilles.length > 0 || selectedSpecialites.length > 0">
+      <div class="active-filters-label">Filtres actifs:</div>
+      <div class="active-filters-chips">
+        <mat-chip-set aria-label="Filtres sélectionnés">
+          <mat-chip *ngFor="let ville of selectedVilles" 
+                   class="filter-chip ville-chip"
+                   (removed)="removeVille(ville)">
+            <span>{{ ville }}</span>
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+          <mat-chip *ngFor="let specialite of selectedSpecialites" 
+                   class="filter-chip specialite-chip"
+                   (removed)="removeSpecialite(specialite)">
+            <span>{{ specialite }}</span>
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+  </div>
+
+  <div class="doctors-table-container">
+    <!-- Loading indicator -->
+    <div *ngIf="loading" class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Chargement des médecins vérifiés...</p>
+    </div>
+    
+    <!-- Mobile Doctor Cards (Visible on small screens) -->
+    <div class="mobile-doctor-cards" *ngIf="!loading && filteredDoctors.length > 0">
+      <div class="doctor-card" *ngFor="let doctor of filteredDoctors; trackBy: trackByDoctorId">
+        <div class="doctor-card-header">
+          <div class="doctor-info">
+            <div class="doctor-avatar">
+              <img [src]="doctor.profilePicture || 'assets/images/default-avatar.png'" [alt]="'Photo du médecin ' + doctor.nom + ' ' + doctor.prenom" />
+            </div>
+            <div class="doctor-name-container">
+              <span class="doctor-name">Dr. {{ doctor.prenom }} {{ doctor.nom }}</span>
+              <span class="doctor-specialty">{{ doctor.specialities && doctor.specialities.length > 0 ? doctor.specialities.join(', ') : 'Non spécifiée' }}</span>
+            </div>
+          </div>
+          <span *ngIf="doctor.isAvailable" class="availability-badge mobile-badge">
+            <span class="status-dot available"></span>Disponible
+          </span>
+          <span *ngIf="!doctor.isAvailable" class="availability-badge unavailable mobile-badge">
+            <span class="status-dot unavailable"></span>Non disponible
+          </span>
+        </div>
+        <div class="doctor-card-body">
+          <div class="doctor-location" *ngIf="doctor.ville">
+            <mat-icon class="location-icon">location_on</mat-icon>
+            <span>{{ doctor.ville }}</span>
+          </div>
+          <button class="book-button mobile-book-button" (click)="openAppointmentDialog(doctor)">
+            <mat-icon>event</mat-icon>
+            Prendre RDV
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Desktop Table (Hidden on small screens) -->
+    <table *ngIf="!loading && filteredDoctors.length > 0" class="doctors-table desktop-only">
+      <thead>
+        <tr>
+          <th class="doctor-col">Médecin</th>
+          <th class="specialite-col">Spécialité</th>
+          <th class="ville-col">Ville</th>
+          <th class="status-col">Statut</th>
+          <th class="action-col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doctor of filteredDoctors; trackBy: trackByDoctorId" class="doctor-row">
+          <td class="doctor-col" data-label="Médecin">
+            <div class="doctor-info">
+              <div class="doctor-avatar">
+                <img [src]="doctor.profilePicture || 'assets/images/default-avatar.png'" [alt]="'Photo du médecin ' + doctor.nom + ' ' + doctor.prenom" />
+              </div>
+              <div class="doctor-name-container">
+                <span class="doctor-name">Dr. {{ doctor.prenom }} {{ doctor.nom }}</span>
+              </div>
+            </div>
+          </td>
+          <td class="specialite-col" data-label="Spécialité">
+            {{ doctor.specialities && doctor.specialities.length > 0 ? doctor.specialities.join(', ') : 'Non spécifiée' }}
+          </td>
+          <td class="ville-col" data-label="Ville">
+            <span *ngIf="doctor.ville"><mat-icon class="location-icon">location_on</mat-icon>{{ doctor.ville }}</span>
+            <span *ngIf="!doctor.ville">-</span>
+          </td>
+          <td class="status-col" data-label="Statut">
+            <span *ngIf="doctor.isAvailable" class="availability-badge">
+              <span class="status-dot available"></span>Disponible
+            </span>
+            <span *ngIf="!doctor.isAvailable" class="availability-badge unavailable">
+              <span class="status-dot unavailable"></span>Non disponible
+            </span>
+          </td>
+          <td class="action-col" data-label="Action">
+            <button class="book-button" (click)="openAppointmentDialog(doctor)">
+              <mat-icon>event</mat-icon>
+              Prendre RDV
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Empty state -->
+    <div *ngIf="filteredDoctors.length === 0 && !loading" class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <p *ngIf="selectedVilles.length > 0 || selectedSpecialites.length > 0">Aucun médecin vérifié ne correspond à vos critères</p>
+      <p *ngIf="selectedVilles.length === 0 && selectedSpecialites.length === 0">Aucun médecin vérifié n'est disponible actuellement</p>
+      <button *ngIf="selectedVilles.length > 0 || selectedSpecialites.length > 0" mat-button (click)="clearFilters()">Réinitialiser les filtres</button>
+    </div>
+  </div>
+</div> 

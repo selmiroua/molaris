@@ -1,0 +1,585 @@
+/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0093c4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #007aa3;
+}
+
+/* Banned user styling */
+.banned-banner {
+  width: 100%;
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  border-bottom: 1px solid #ffcdd2;
+  z-index: 10;
+}
+
+.banned-banner mat-icon {
+  margin-right: 8px;
+  color: #f44336;
+}
+
+.banned-notification {
+  display: flex;
+  align-items: center;
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px 16px;
+  margin: 12px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: 1px solid #ffcdd2;
+}
+
+.banned-notification .warning-icon {
+  margin-right: 8px;
+  color: #f44336;
+}
+
+.locked-icon {
+  margin-left: 8px;
+  font-size: 16px;
+  color: #f44336;
+}
+
+/* Material Design Overrides */
+.mat-mdc-form-field {
+  .mat-mdc-form-field-flex {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+  }
+}
+
+.mdc-text-field--outlined {
+  --mdc-outlined-text-field-container-shape: 12px;
+}
+
+.mat-mdc-raised-button {
+  --mdc-protected-button-container-shape: 25px;
+}
+
+// Doctor verification dialog styles
+.doctor-detail-dialog-container .mat-mdc-dialog-container {
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 12px !important;
+  
+  .mdc-dialog__surface {
+    overflow: hidden !important;
+  }
+}
+
+// Custom style for the secretary profile dialog
+.mat-mdc-dialog-container.secretary-profile-dialog {
+  .mdc-dialog__surface {
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 0;
+  }
+  
+  .mdc-dialog__container {
+    padding: 0;
+  }
+}
+
+// Add custom styles for secretary dialog
+.secretary-detail-dialog .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+// Add styles for appointment details dialog
+.appointment-details-dialog {
+  .mdc-dialog__surface {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+  
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+  }
+  
+  .mat-mdc-tab-header {
+    background: #f5f5f5;
+  }
+  
+  .mat-mdc-tab {
+    min-width: 160px;
+    
+    .mdc-tab__text-label {
+      display: flex;
+      align-items: center;
+    }
+  }
+  
+  .mat-mdc-tab.mdc-tab--active {
+    background-color: rgba(55, 131, 146, 0.1);
+    
+    .mdc-tab__text-label {
+      color: #378392;
+    }
+    
+    .mat-icon {
+      color: #378392;
+    }
+  }
+  
+  .mat-expansion-panel {
+    border-radius: 8px !important;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    
+    &.mat-expanded {
+      margin-bottom: 16px !important;
+    }
+  }
+  
+  .mat-expansion-panel-header {
+    padding: 0 16px;
+    height: 54px !important;
+  }
+}
+
+// Snackbar styles
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+
+  .mat-simple-snackbar-action {
+    color: white;
+  }
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+
+  .mat-simple-snackbar-action {
+    color: white;
+  }
+}
+
+// Banned notification snackbar styling
+.banned-notification-snackbar {
+  background-color: #f44336;
+  color: white;
+  font-weight: 500;
+  
+  .mat-simple-snackbar-action {
+    color: white;
+    font-weight: bold;
+  }
+}
+
+.banned-snackbar {
+  background-color: rgba(244, 67, 54, 0.9);
+  color: white;
+  
+  .mat-simple-snackbar-action {
+    color: white;
+    font-weight: bold;
+  }
+}
+
+// Add warning-snackbar style
+.warning-snackbar {
+  background: #ff9800;
+  color: white;
+
+  .mat-simple-snackbar-action {
+    color: white;
+    font-weight: bold;
+  }
+}
+
+/* Global Calendar Styles */
+.fc {
+  font-family: inherit;
+}
+
+.fc-scrollgrid {
+  border-collapse: collapse;
+}
+
+.fc-scrollgrid td {
+  border: 1px solid #e2e8f0;
+}
+
+.fc-timegrid-slot-label {
+  vertical-align: middle;
+}
+
+.fc-timegrid-axis {
+  background: #f8fafc;
+}
+
+.fc-timegrid-slot {
+  height: 48px;
+}
+
+.fc-event {
+  cursor: pointer;
+  padding: 4px;
+  margin: 2px 0;
+  border-radius: 4px;
+}
+
+/* Add CSS variable-based styles for status colors */
+.fc-event.status-pending {
+  background-color: var(--status-pending-bg, #FFF8E1) !important;
+  color: var(--status-pending-text, #000000) !important;
+  border-left: 4px solid var(--status-pending-border, #f97316) !important;
+}
+
+.fc-event.status-accepted {
+  background-color: var(--status-accepted-bg, #E8F5E9) !important;
+  color: var(--status-accepted-text, #000000) !important;
+  border-left: 4px solid var(--status-accepted-border, #0ea5e9) !important;
+}
+
+.fc-event.status-completed {
+  background-color: var(--status-completed-bg, #E3F2FD) !important;
+  color: var(--status-completed-text, #000000) !important;
+  border-left: 4px solid var(--status-completed-border, #22c55e) !important;
+}
+
+.fc-event.status-rejected, .fc-event.status-canceled {
+  background-color: var(--status-rejected-bg, #FFEBEE) !important;
+  color: var(--status-rejected-text, #000000) !important;
+  border-left: 4px solid var(--status-rejected-border, #ef4444) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .fc-toolbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .fc-header-toolbar {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Color palette dialog container styles */
+.color-palette-dialog-container .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.12) !important;
+}
+
+.color-palette-dialog-container .mdc-dialog__surface {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Add CSS for image placeholders */
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  border-radius: 0.5rem;
+  min-height: 120px;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  
+  mat-icon {
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  &.full-size {
+    min-height: 300px;
+    padding: 2rem;
+    
+    mat-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    span {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Styles pour le dialogue de sélection du type de rendez-vous */
+.appointment-type-dialog .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.appointment-type-dialog .mat-mdc-dialog-surface {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive styles for Angular Material components */
+@media (max-width: 768px) {
+  // Make mat-cards more compact on mobile
+  .mat-mdc-card {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+    
+    .mat-mdc-card-header {
+      padding: 8px !important;
+    }
+    
+    .mat-mdc-card-content {
+      padding: 8px !important;
+    }
+    
+    .mat-mdc-card-actions {
+      padding: 8px !important;
+      margin: 0 !important;
+    }
+  }
+  
+  // Make mat-form-field take full width on mobile
+  .mat-mdc-form-field {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+  
+  // Adjust mat-tabs for mobile
+  .mat-mdc-tab-header {
+    .mat-mdc-tab {
+      min-width: auto !important;
+      padding: 0 12px !important;
+      
+      .mat-mdc-tab-label-content {
+        font-size: 14px !important;
+      }
+    }
+  }
+  
+  // Make mat-table responsive
+  .mat-mdc-table {
+    width: 100% !important;
+    display: block !important;
+    overflow-x: auto !important;
+    
+    .mat-mdc-cell {
+      padding: 8px !important;
+    }
+  }
+  
+  // Make mat-dialog more compact on mobile
+  .mat-mdc-dialog-container {
+    .mat-mdc-dialog-content {
+      padding: 12px !important;
+      max-height: 65vh !important;
+    }
+    
+    .mat-mdc-dialog-actions {
+      padding: 8px !important;
+    }
+  }
+  
+  // Make mat-buttons easier to tap on mobile
+  .mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-flat-button, .mat-mdc-stroked-button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  
+  // Make mat-menu wider on mobile
+  .mat-mdc-menu-panel {
+    min-width: 250px !important;
+    
+    .mat-mdc-menu-item {
+      height: 48px !important;
+      line-height: 48px !important;
+    }
+  }
+  
+  // Make datepicker work better on mobile
+  .mat-mdc-datepicker-content {
+    .mat-calendar {
+      width: 100% !important;
+      height: auto !important;
+    }
+  }
+}
+
+// Make snackbar responsive
+.mat-mdc-snack-bar-container {
+  @media (max-width: 599px) {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    
+    .mat-mdc-snack-bar-content {
+      padding: 12px !important;
+    }
+  }
+}
+
+// Appointment dialog responsive styles
+.appointment-dialog-container {
+  .mat-mdc-dialog-container {
+    padding: 0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .mat-mdc-dialog-content {
+    max-height: 75vh;
+    padding: 20px 24px;
+  }
+  
+  @media (max-width: 768px) {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    
+    .mat-mdc-dialog-content {
+      padding: 16px;
+    }
+    
+    .mat-mdc-dialog-actions {
+      padding: 12px 16px;
+      flex-direction: column;
+      gap: 8px;
+      
+      button {
+        width: 100%;
+      }
+    }
+    
+    .time-slots {
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)) !important;
+    }
+    
+    .form-field {
+      margin-bottom: 12px !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .patient-header {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 12px !important;
+    }
+    
+    .time-slots {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+}
+
+// Default global styles for time-slots used across appointment components
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 15px;
+}
+
+// Add styles for the secretary welcome dialog
+.secretary-welcome-dialog {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 12px;
+  }
+  
+  .mat-horizontal-stepper-header-container {
+    margin-bottom: 24px;
+  }
+  
+  .mat-step-icon {
+    background-color: #4169E1;
+  }
+  
+  .mat-step-icon-selected {
+    background-color: #4169E1;
+  }
+  
+  .mat-step-icon-state-done {
+    background-color: #4caf50;
+  }
+}
+
+// Make sure the dialog is responsive
+@media (max-width: 600px) {
+  .secretary-welcome-dialog {
+    .mat-dialog-container {
+      padding: 12px;
+    }
+  }
+}
+// Aggressive fix for dialog centering and visibility
+::ng-deep .cdk-overlay-pane {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh !important;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  margin: 0 !important;
+  top: 0 !important;
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 90vh !important;
+}
+
+::ng-deep .mdc-dialog__surface {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .cdk-overlay-pane,
+  ::ng-deep .mat-mdc-dialog-container,
+  ::ng-deep .mdc-dialog__surface {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+}
+

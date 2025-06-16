@@ -1,0 +1,261 @@
+<div class="dashboard-container" [class.menu-collapsed]="!isMenuOpen" [class.menu-open]="isMenuOpen && isMobile">
+  <!-- Banned user banner -->
+  <div class="banned-banner" *ngIf="bannedUserService.isBanned()">
+    <mat-icon>warning</mat-icon>
+    <span>Votre compte est actuellement suspendu. Contactez l'administrateur via la messagerie pour plus d'informations.</span>
+  </div>
+
+  <!-- Sidebar -->
+  <nav class="side-nav" [class.collapsed]="!isMenuOpen">
+    <div class="logo-section">
+      <div class="logo">
+        <div class="logo-img-container">
+          <img src="assets/images/molarisse.png" alt="Tooth Logo" class="tooth-logo">
+          <div class="shine-effect"></div>
+        </div>
+        <span class="logo-text"></span>
+        <span class="role-text">Patient</span>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <a class="nav-link" (click)="showDashboard($event)" [class.active]="activeSection === 'dashboard'" [class.disabled]="bannedUserService.shouldDisableLink('dashboard')">
+        <div class="nav-icon">
+          <i class="fas fa-home"></i>
+        </div>
+        <span>Tableau de bord</span>
+        <mat-icon *ngIf="bannedUserService.shouldDisableLink('dashboard')" class="locked-icon">lock</mat-icon>
+      </a>
+      
+      <a class="nav-link"  *ngIf="!bannedUserService.isBanned()" (click)="showProfile($event)" [class.active]="activeSection === 'profile'" [class.disabled]="bannedUserService.shouldDisableLink('profile')">
+        <div class="nav-icon">
+          <i class="fas fa-user"></i>
+        </div>
+        <span>Mon Profil</span>
+        <mat-icon *ngIf="bannedUserService.shouldDisableLink('profile')" class="locked-icon">lock</mat-icon>
+      </a>
+
+      <a class="nav-link" (click)="showAppointments($event)" [class.active]="activeSection === 'appointments'" [class.disabled]="bannedUserService.shouldDisableLink('appointments')">
+        <div class="nav-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <span>Mes Rendez-vous</span>
+        <mat-icon *ngIf="bannedUserService.shouldDisableLink('appointments')" class="locked-icon">lock</mat-icon>
+      </a>
+
+      <a class="nav-link" (click)="navigateToBookAppointment($event)" [class.active]="activeSection === 'book-appointment'" [class.disabled]="bannedUserService.shouldDisableLink('book-appointment')">
+        <div class="nav-icon">
+          <i class="fas fa-calendar-plus"></i>
+        </div>
+        <span>Prendre Rendez-vous</span>
+        <mat-icon *ngIf="bannedUserService.shouldDisableLink('book-appointment')" class="locked-icon">lock</mat-icon>
+      </a>
+      
+      <a class="nav-link" (click)="showMessaging()" [class.active]="activeSection === 'messaging'">
+        <div class="nav-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <span>Messagerie</span>
+      </a>
+
+      <!-- Banned account notification if user is banned -->
+      <div *ngIf="bannedUserService.isBanned()" class="banned-notification">
+        <mat-icon class="warning-icon">warning</mat-icon>
+        <span>Compte suspendu</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="toggleMenu()" [class.active]="!isMenuOpen" *ngIf="!isMobile">
+          <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+        </button>
+        <div class="brand">
+          <img src="assets/images/molarisse.png" alt="Molarisse" class="brand-logo">
+          <span class="brand-name">Molaris</span>
+        </div>
+        <div class="search-bar">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Rechercher..." class="search-input">
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="fullscreen-toggle" (click)="toggleFullscreen()" matTooltip="{{ isFullscreen ? 'Quitter le mode plein écran' : 'Mode plein écran' }}">
+          <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+        <div class="notifications">
+          <app-notification-bell></app-notification-bell>
+        </div>
+        <div class="messaging">
+          <app-message-bell></app-message-bell>
+        </div>
+        <div class="user-profile" (click)="toggleProfileDropdown()">
+          <img [src]="profileImage" 
+               alt="Profile" 
+               class="profile-image" 
+               (error)="handleImageError($event)"
+               onerror="this.src='assets/images/default-avatar.png'">
+          <div class="user-info">
+            <span class="user-name">{{ patientName }}</span>
+            <span class="user-role">Patient</span>
+          </div>
+          <mat-icon class="dropdown-icon" [class.open]="isProfileDropdownOpen">expand_more</mat-icon>
+          <div class="profile-dropdown" [class.show]="isProfileDropdownOpen">
+            <a (click)="showProfile()" class="dropdown-item">
+              <mat-icon>person</mat-icon>
+              <span>Mon Profil</span>
+            </a>
+          
+            <a (click)="logout()" class="dropdown-item logout">
+              <mat-icon>logout</mat-icon>
+              <span>Déconnexion</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrapper" [class.menu-collapsed]="!isMenuOpen">
+      <!-- Dashboard View -->
+      <div *ngIf="activeSection === 'dashboard'" class="dashboard-view">
+        <div class="welcome-card">
+          <div class="welcome-content">
+            <h2>Bienvenue dans votre espace patient</h2>
+            <p>Gérez vos rendez-vous et votre santé dentaire.</p>
+            <button class="welcome-action-btn" (click)="navigateToBookAppointment()" *ngIf="!bannedUserService.isBanned()">
+              <mat-icon>add_circle</mat-icon>
+              Prendre rendez-vous
+            </button>
+          </div>
+          <div class="welcome-illustration">
+            <img src="assets/images/dental-illustration.svg" alt="Illustration dentaire" *ngIf="hasIllustration; else defaultIllustration">
+            <ng-template #defaultIllustration>
+              <div class="default-illustration">
+                <mat-icon class="illustration-icon">healing</mat-icon>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+        
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-details">
+              <h3>Rendez-vous aujourd'hui</h3>
+              <p class="stat-number">{{ todayAppointments }} </p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-details">
+              <h3>En attente de confirmation</h3>
+              <p class="stat-number">{{ pendingAppointments }}</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-details">
+              <h3>Total des rendez-vous</h3>
+              <p class="stat-number">{{ totalAppointments }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Appointments Section -->
+        <div  class="today-appointments" *ngIf="getTodaysAppointments().length > 0 && !bannedUserService.isBanned()">
+          <div class="section-header">
+            <h2>Rendez-vous d'aujourd'hui</h2>
+          </div>
+          
+          <div class="today-appointments-cards">
+            <div  *ngFor="let appointment of getTodaysAppointments() || !bannedUserService.isBanned() " class="today-appointment-card">
+              <div class="time-badge">
+                {{ appointment.appointmentDateTime | date:'HH:mm' }}
+              </div>
+              <div class="appointment-info">
+                <h3>Dr. {{ appointment.doctor?.prenom }} {{ appointment.doctor?.nom }}</h3>
+                <div class="appointment-details">
+                  <span class="appointment-type">
+                    <mat-icon>medical_services</mat-icon>
+                    {{ getAppointmentTypeLabel(appointment.appointmentType) }}
+                  </span>
+                  <span class="appointment-status" [ngClass]="getStatusClass(appointment.status)">
+                    <mat-icon>{{ getStatusIcon(appointment.status) }}</mat-icon>
+                    {{ getStatusLabel(appointment.status) }}
+                  </span>
+                </div>
+                <div class="appointment-actions">
+                  <button class="book-again" (click)="bookFollowUpAppointment(appointment)" matTooltip="Prendre un nouveau rendez-vous">
+                    <mat-icon>add_circle</mat-icon>
+                    <span>Nouveau RDV</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Appointments Section -->
+        <div class="recent-appointments">
+          <div class="section-header">
+            <h2>Rendez-vous récents</h2>
+            <button mat-button color="primary" (click)="showAppointments()" *ngIf="!bannedUserService.isBanned()">
+              Voir tout <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+          <div *ngIf="!bannedUserService.isBanned()">
+            <app-patient-appointments
+            [userRole]="'patient'"
+            [limit]="5"
+            *ngIf="activeSection === 'dashboard'">
+          </app-patient-appointments>
+          </div>
+         
+        </div>
+      </div>
+      
+      <!-- Profile View -->
+      <div *ngIf="activeSection === 'profile'">
+        <app-profile></app-profile>
+      </div>
+
+      <!-- Appointments View -->
+      <div *ngIf="activeSection === 'appointments'">
+        <app-patient-appointments></app-patient-appointments>
+      </div>
+
+      <!-- Book Appointment View -->
+      <div *ngIf="activeSection === 'book-appointment'">
+        <app-book-appointment></app-book-appointment>
+      </div>
+      
+      <!-- Messaging View -->
+      <div *ngIf="activeSection === 'messaging'" class="messaging-view">
+        <div class="section-header">
+          <h2>Messagerie</h2>
+          <p>Communiquez avec votre équipe médicale</p>
+        </div>
+        <app-messaging></app-messaging>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile menu toggle button that appears at bottom right on small screens -->
+  <button *ngIf="isMobile" class="menu-toggle mobile-fab" (click)="toggleMenu()">
+    <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
+</div>
+
+

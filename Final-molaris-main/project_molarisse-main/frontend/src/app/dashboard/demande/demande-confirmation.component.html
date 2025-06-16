@@ -1,0 +1,56 @@
+<div class="confirmation-container">
+  <mat-card class="confirmation-card">
+    <mat-card-header>
+      <mat-card-title>Confirmation de votre demande</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <h2>Votre demande a été soumise avec succès !</h2>
+        <p>Nous vous remercions pour votre intérêt. Nous examinerons votre demande dans les plus brefs délais.</p>
+      </div>
+
+      <div class="demande-details" *ngIf="demandeData">
+        <h3>Récapitulatif de votre demande</h3>
+
+        <div class="detail-section">
+          <h4>Informations personnelles</h4>
+          <p><strong>Nom :</strong> {{demandeData.nom}}</p>
+          <p><strong>Prénom :</strong> {{demandeData.prenom}}</p>
+          <p><strong>Email :</strong> {{demandeData.email}}</p>
+          <p><strong>Téléphone :</strong> {{demandeData.telephone}}</p>
+          <p><strong>Adresse :</strong> {{demandeData.adresse}}</p>
+          <p><strong>Ville :</strong> {{demandeData.ville}}</p>
+          <p><strong>Code postal :</strong> {{demandeData.codePostal}}</p>
+        </div>
+
+        <div class="detail-section">
+          <h4>Informations professionnelles</h4>
+          <p><strong>Années d'expérience :</strong> {{demandeData.anneeExperience}}</p>
+          <p><strong>Spécialité :</strong> {{demandeData.specialite}}</p>
+          <p *ngIf="demandeData.autreSpecialite"><strong>Autre spécialité :</strong> {{demandeData.autreSpecialite}}</p>
+        </div>
+
+        <div class="detail-section" *ngIf="demandeData.aCabinet">
+          <h4>Informations sur le cabinet</h4>
+          <p><strong>Nom du cabinet :</strong> {{demandeData.nomCabinet}}</p>
+          <p><strong>Adresse du cabinet :</strong> {{demandeData.adresseCabinet}}</p>
+          <p><strong>Ville du cabinet :</strong> {{demandeData.villeCabinet}}</p>
+          <p><strong>Code postal du cabinet :</strong> {{demandeData.codePostalCabinet}}</p>
+        </div>
+      </div>
+
+      <!-- Debug information, remove after testing -->
+      <div *ngIf="!demandeData" class="error-message">
+        <p>Aucune donnée de demande n'a été trouvée.</p>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="goToDashboard()">
+        Retourner au tableau de bord
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

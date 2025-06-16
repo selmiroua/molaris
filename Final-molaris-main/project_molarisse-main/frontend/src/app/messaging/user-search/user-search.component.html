@@ -1,0 +1,5 @@
+<img 
+  *ngIf="user.profilePicturePath || user.profileImageUrl" 
+  [src]="user.profileImageUrl" 
+  alt="{{ user.prenom }} {{ user.nom }}"
+  (error)="handleImageError($event)"> 

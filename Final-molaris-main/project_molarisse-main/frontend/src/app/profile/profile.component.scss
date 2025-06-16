@@ -1,0 +1,986 @@
+// Variables
+$primary-color: #4361ee;
+$primary-light: #eaefff;
+$primary-dark: #3a56d4;
+$secondary-color: #f8fafc;
+$text-color: #1e293b;
+$text-light: #64748b;
+$border-radius-sm: 8px;
+$border-radius-md: 12px;
+$border-radius-lg: 16px;
+$box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+$box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$transition: all 0.3s ease;
+
+// Container
+.profile-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+}
+
+// Alert Messages
+.alert-container {
+  margin-bottom: 20px;
+}
+
+.alert {
+  padding: 15px;
+  border-radius: $border-radius-md;
+  display: flex;
+  align-items: center;
+  box-shadow: $box-shadow-sm;
+  
+  &.alert-success {
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    
+    mat-icon {
+      color: #4caf50;
+      margin-right: 10px;
+    }
+  }
+
+  button {
+    margin-left: auto;
+  }
+}
+
+// Header
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.profile-picture-section {
+  margin-right: 30px;
+  
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
+
+.profile-picture-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: $box-shadow-md;
+  border: 4px solid white;
+  
+  .profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .profile-picture-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: $transition;
+  }
+  
+  &:hover .profile-picture-overlay {
+    opacity: 1;
+  }
+  
+  .change-photo-btn {
+    transform: scale(0.8);
+  }
+}
+
+.profile-title {
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: $primary-color;
+    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .subtitle {
+    color: $text-light;
+    font-size: 18px;
+    margin: 0;
+  }
+}
+
+// Content
+.profile-content {
+  background: white;
+  border-radius: $border-radius-md;
+  box-shadow: $box-shadow-sm;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+// Tabs
+.profile-tabs {
+  .tab-icon {
+    margin-right: 8px;
+    color: white;
+  }
+  
+  .tab-label {
+    color: white;
+  }
+  
+  ::ng-deep {
+    .mat-mdc-tab-header {
+      background-color: $primary-color;
+      
+      .mat-mdc-tab {
+        color: white;
+        
+        &.mat-mdc-tab-active {
+          color: white;
+          font-weight: 600;
+        }
+      }
+      
+      .mat-mdc-tab-header-pagination-chevron {
+        border-color: white;
+      }
+      
+      .mat-mdc-tab-label-active {
+        font-weight: 600;
+      }
+
+      .mdc-tab-indicator__content--underline {
+        border-color: white;
+      }
+    }
+    
+    .mat-mdc-tab-body-content {
+      padding: 0 !important;
+    }
+  }
+}
+
+.tab-content {
+  padding: 30px;
+  
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+  }
+}
+
+// Forms
+.profile-form,
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  &.actions {
+    justify-content: flex-end;
+    margin-top: 24px;
+    
+    @media (max-width: 768px) {
+      justify-content: center;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 16px;
+  
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: $text-color;
+  }
+  
+  .form-control {
+    width: 100%;
+  }
+  
+  .error-message {
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: 4px;
+  }
+  
+  &.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 8px;
+    
+    @media (max-width: 768px) {
+      align-items: flex-start;
+    }
+    
+    mat-checkbox {
+      margin-right: 8px;
+    }
+    
+    .checkbox-label {
+      font-size: 14px;
+      color: $text-light;
+    }
+  }
+}
+
+// Add enhanced responsiveness for mat-form-field
+::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+    
+    @media (max-width: 768px) {
+      .mat-mdc-form-field-subscript-wrapper {
+        margin-top: -5px;
+      }
+    }
+  }
+  
+  .mat-mdc-tab-body-content {
+    overflow-x: hidden !important;
+  }
+  
+  .mat-vertical-stepper-header {
+    @media (max-width: 768px) {
+      padding: 16px !important;
+    }
+  }
+  
+  .mat-vertical-content-container {
+    @media (max-width: 768px) {
+      margin-left: 20px !important;
+    }
+  }
+}
+
+// Make button controls more mobile-friendly
+.button-row {
+  display: flex;
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Information sections
+.info-message {
+  background-color: $primary-light;
+  padding: 15px;
+  border-radius: $border-radius-md;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba($primary-color, 0.2);
+  
+  mat-icon {
+    color: $primary-color;
+    margin-right: 10px;
+  }
+}
+
+.info-group {
+  background-color: $secondary-color;
+  padding: 20px;
+  border-radius: $border-radius-md;
+  margin-bottom: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  
+  h3 {
+    margin-top: 0;
+    color: $primary-color;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+// Custom specialties styling
+.custom-specialties-container {
+  width: 100%;
+  margin: 10px 0 20px;
+  
+  .custom-specialties-list {
+    margin-bottom: 15px;
+    
+    h4 {
+      margin-bottom: 10px;
+      color: $text-light;
+      font-weight: 500;
+    }
+    
+    ::ng-deep {
+      .mat-mdc-chip {
+        background-color: $primary-light;
+        color: $primary-color;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        
+        &:hover {
+          background-color: rgba($primary-color, 0.2);
+        }
+        
+        .mat-mdc-chip-trailing-icon {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+  
+  .add-custom-specialty {
+    width: 100%;
+  }
+}
+
+// Medical information styling
+.allergies-section {
+  .allergies-display {
+    margin-bottom: 15px;
+  }
+  
+  .empty-field-message {
+    display: flex;
+    align-items: center;
+    color: $text-light;
+    margin-bottom: 15px;
+    
+    mat-icon {
+      margin-right: 8px;
+      color: $primary-color;
+    }
+  }
+  
+  .common-allergies {
+    margin-top: 15px;
+    
+    p {
+      margin-bottom: 8px;
+      color: $text-light;
+      font-weight: 500;
+    }
+
+    ::ng-deep {
+      .mat-mdc-chip {
+        background-color: $primary-light;
+        color: $primary-color;
+
+        &:hover {
+          background-color: rgba($primary-color, 0.2);
+        }
+      }
+    }
+  }
+}
+
+// Action buttons
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  
+  .password-change-btn {
+    min-width: 220px;
+    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    color: white;
+    border-radius: 30px;
+    padding: 0 24px;
+    height: 48px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    overflow: hidden;
+    position: relative;
+    
+    .btn-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      
+      mat-icon {
+        margin-right: 8px;
+        transition: all 0.3s ease;
+      }
+    }
+    
+    .btn-loader {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: inherit;
+    }
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+    
+    &:disabled {
+      background: #9e9e9e;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.7;
+      
+      &:hover {
+        transform: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+  
+  button:not(.password-change-btn) {
+    min-width: 180px;
+    background-color: $primary-color;
+    color: white;
+    border-radius: 30px;
+    padding: 10px 24px;
+    transition: $transition;
+    box-shadow: 0 2px 6px rgba(67, 97, 238, 0.2);
+    
+    &:hover {
+      background-color: $primary-dark;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Password form
+.password-form-container {
+  h3 {
+    margin-top: 0;
+    color: $primary-color;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+.success-message {
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  color: white;
+  padding: 20px;
+  border-radius: $border-radius-md;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+  animation: fadeInUp 0.5s ease-out forwards;
+  
+  mat-icon {
+    margin-right: 15px;
+    font-size: 28px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .success-content {
+    h4 {
+      margin: 0 0 8px 0;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+// Floating Save Button
+.floating-save-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  min-width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  color: white;
+  border-radius: 30px;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 999;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 20px;
+  
+  // Security mode styles
+  &.security-mode {
+    background: linear-gradient(135deg, #5c6bc0, #3949ab);
+    
+    &:hover {
+      box-shadow: 0 8px 20px rgba(92, 107, 192, 0.4);
+    }
+  }
+  
+  .save-btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    transition: all 0.3s ease;
+  }
+  
+  .save-label {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.3s ease;
+    margin-left: 0;
+    font-weight: 500;
+  }
+  
+  &:hover {
+    min-width: 160px;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+    
+    .save-label {
+      max-width: 120px;
+      opacity: 1;
+      margin-left: 8px;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0) scale(0.95);
+  }
+  
+  &:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      min-width: 60px;
+      
+      .save-label {
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+      }
+    }
+  }
+  
+  mat-icon {
+    font-size: 24px;
+    transition: all 0.3s ease;
+  }
+  
+  .save-btn-loader {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @media (max-width: 768px) {
+    bottom: 20px;
+    right: 20px;
+    height: 55px;
+    min-width: 55px;
+    
+    &:hover {
+      min-width: 140px;
+    }
+  }
+}
+
+// Add animation for pulse effect on save button
+@keyframes pulse-save {
+  0% {
+    box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(67, 97, 238, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
+  }
+}
+
+// Add animation to the save button when form is dirty
+.profile-form.ng-dirty ~ .floating-save-btn {
+  animation: pulse-save 2s infinite;
+}
+
+// Custom snackbar styles
+::ng-deep {
+  .success-snackbar {
+    background: linear-gradient(135deg, #43a047, #2e7d32);
+    color: white;
+    border-radius: 8px;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+  
+  .error-snackbar {
+    background: linear-gradient(135deg, #e53935, #c62828);
+    color: white;
+    border-radius: 8px;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+}
+
+// Label icon for password fields
+.label-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  margin-right: 6px;
+  color: $primary-color;
+  position: relative;
+  top: -1px;
+}
+
+// Password strength indicator
+.password-strength-wrapper {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.password-requirements {
+  font-size: 13px;
+  color: $text-light;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.password-strength-bar {
+  display: flex;
+  align-items: center;
+  
+  .strength-segments {
+    display: flex;
+    gap: 5px;
+    flex: 1;
+    
+    .segment {
+      height: 8px;
+      border-radius: 4px;
+      background-color: #e0e0e0;
+      flex: 1;
+      transition: background-color 0.3s ease;
+    }
+  }
+  
+  .strength-text {
+    margin-left: 15px;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 70px;
+    text-align: right;
+  }
+}
+
+// Animation for password strength segments
+@keyframes fillSegment {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.segment {
+  transform-origin: left;
+  animation: fillSegment 0.3s ease-out forwards;
+}
+
+// Password status message
+.password-status {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+  
+  mat-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
+  }
+  
+  span {
+    font-size: 13px;
+  }
+  
+  &.valid {
+    color: #43a047;
+  }
+  
+  &.invalid {
+    color: #e53935;
+  }
+}
+
+/* CV Section Styles */
+.cv-section {
+  padding: 16px;
+  margin-top: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.cv-section h3 {
+  color: #2c3e50;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.cv-status {
+  margin-bottom: 16px;
+}
+
+.cv-preview {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.cv-icon {
+  font-size: 36px;
+  height: 36px;
+  width: 36px;
+  margin-right: 16px;
+  color: #f44336;
+}
+
+.cv-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-filename {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.cv-uploaded {
+  font-size: 14px;
+  color: #4caf50;
+}
+
+.cv-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cv-upload {
+  margin-bottom: 16px;
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: #2196f3;
+  background-color: rgba(33, 150, 243, 0.05);
+}
+
+.upload-area.drag-over {
+  border-color: #2196f3;
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.upload-area mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+  color: #2196f3;
+}
+
+.upload-area p {
+  margin-bottom: 16px;
+  color: #666;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+.selected-file mat-icon {
+  color: #f44336;
+  margin-right: 12px;
+}
+
+.selected-file span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-progress {
+  margin: 16px 0;
+}
+
+.upload-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.cv-requirements {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.cv-requirements p {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.requirement-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  margin-right: 8px;
+  color: #2196f3;
+}
+
+.specialties-field {
+  width: 100%;
+  
+  ::ng-deep {
+    .mat-mdc-select-value {
+      max-width: 100%;
+    }
+    
+    .mat-mdc-select-panel {
+      max-height: 300px;
+    }
+    
+    .mat-mdc-option {
+      height: 36px;
+      line-height: 36px;
+    }
+  }
+}

@@ -1,0 +1,492 @@
+<!-- Debug info -->
+<div *ngIf="!userRole" class="debug-info">
+  <p>Loading user role...</p>
+</div>
+
+<!-- Profile Container -->
+<div class="profile-container">
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert-container" *ngIf="updateSuccess">
+    <div class="alert alert-success">
+      <mat-icon>check_circle</mat-icon>
+      <span>Profil mis à jour avec succès</span>
+      <button mat-icon-button (click)="updateSuccess = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-picture-section">
+      <div class="profile-picture-container">
+        <img [src]="profileImageUrl" 
+             alt="Photo de profil" 
+             class="profile-picture"
+             (error)="handleImageError($event)">
+        <div class="profile-picture-overlay">
+          <button mat-fab color="primary" class="change-photo-btn" (click)="triggerFileInput()">
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+        </div>
+      </div>
+      <input type="file" 
+             #fileInput 
+             style="display: none" 
+             (change)="onFileSelected($event)"
+             accept="image/*">
+    </div>
+    <div class="profile-title">
+      <h1>Mon Profil</h1>
+      <p class="subtitle">{{ userRole | titlecase }}</p>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content">
+    <!-- Profile Tabs -->
+    <mat-tab-group #profileTabs mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="300ms" class="profile-tabs" (selectedTabChange)="tabChanged($event)">
+      <!-- Personal Information Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">person</mat-icon>
+          <span class="tab-label">Informations Personnelles</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <form [formGroup]="profileForm" class="profile-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Prénom</mat-label>
+                <mat-icon matPrefix>person_outline</mat-icon>
+                <input matInput formControlName="prenom" placeholder="Votre prénom">
+                <mat-error *ngIf="profileForm.get('prenom')?.hasError('required')">Le prénom est requis</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Nom</mat-label>
+                <mat-icon matPrefix>person_outline</mat-icon>
+                <input matInput formControlName="nom" placeholder="Votre nom">
+                <mat-error *ngIf="profileForm.get('nom')?.hasError('required')">Le nom est requis</mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Date de naissance (masqué pour les docteurs) -->
+            <div class="form-row" *ngIf="userRole && userRole.toUpperCase() !== 'DOCTOR'">
+              <mat-form-field appearance="outline">
+                <mat-label>Date de Naissance</mat-label>
+                <mat-icon matPrefix>cake</mat-icon>
+                <input matInput [matDatepicker]="dobPicker" formControlName="dateNaissance" placeholder="JJ/MM/AAAA">
+                <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                <mat-datepicker #dobPicker></mat-datepicker>
+                <mat-hint *ngIf="!profileForm.get('dateNaissance')?.value">Sélectionnez votre date de naissance</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <mat-icon matPrefix>email</mat-icon>
+                <input matInput formControlName="email" type="email" placeholder="Votre email">
+                <mat-error *ngIf="profileForm.get('email')?.hasError('required')">L'email est requis</mat-error>
+                <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Format d'email invalide</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Téléphone</mat-label>
+                <mat-icon matPrefix>phone</mat-icon>
+                <input matInput formControlName="phoneNumber" placeholder="12345678" (change)="profileForm.markAsDirty()">
+                <mat-hint>Format: 8 chiffres sans indicatif pays (exemple: 12345678)</mat-hint>
+                <mat-error *ngIf="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched">
+                  Le numéro de téléphone doit contenir 8 chiffres
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Adresse (masqué pour les docteurs) -->
+            <div class="form-row" *ngIf="userRole && userRole.toUpperCase() !== 'DOCTOR'">
+              <mat-form-field appearance="outline" class="address-field">
+                <mat-label>Adresse</mat-label>
+                <mat-icon matPrefix>home</mat-icon>
+                <input matInput formControlName="address" placeholder="Votre adresse" (change)="profileForm.markAsDirty()">
+              </mat-form-field>
+            </div>
+
+            <!-- Sexe field - Only for patients -->
+            <div class="form-row" *ngIf="userRole && userRole.toUpperCase() === 'PATIENT'">
+              <mat-form-field appearance="outline">
+                <mat-label>Sexe</mat-label>
+                <mat-icon matPrefix>wc</mat-icon>
+                <mat-select formControlName="genre">
+                  <mat-option value="F">Femme</mat-option>
+                  <mat-option value="H">Homme</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <!-- Profession field - Only for patients -->
+            <div class="form-row" *ngIf="userRole && userRole.toUpperCase() === 'PATIENT'">
+              <mat-form-field appearance="outline" class="profession-field">
+                <mat-label>Profession</mat-label>
+                <mat-icon matPrefix>work</mat-icon>
+                <input matInput formControlName="profession" placeholder="Votre profession">
+              </mat-form-field>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Professional Information Tab (For Doctors) -->
+      <mat-tab *ngIf="userRole && userRole.toUpperCase() === 'DOCTOR'">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">business</mat-icon>
+          <span class="tab-label">Informations Professionnelles</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <div class="info-message">
+            <mat-icon>info</mat-icon>
+            <span>Ces informations seront visibles par vos patients.</span>
+          </div>
+
+          <form [formGroup]="profileForm" class="profile-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="specialties-field">
+                <mat-label>Spécialités</mat-label>
+                <mat-select formControlName="specialities" multiple (selectionChange)="onSpecialtySelectionChange($event)">
+                  <mat-option *ngFor="let specialty of specialties" [value]="specialty">
+                    {{ specialty }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>school</mat-icon>
+                <mat-hint>Sélectionnez une ou plusieurs spécialités</mat-hint>
+              </mat-form-field>
+
+              <!-- Champ simple pour spécialité personnalisée -->
+              <div *ngIf="hasAutreSelected" style="margin-top: 15px; width: 100%;">
+                <mat-form-field appearance="outline" style="width: 100%;">
+                  <mat-label>Spécialité personnalisée</mat-label>
+                  <input matInput [(ngModel)]="newCustomSpecialty" [ngModelOptions]="{standalone: true}" placeholder="Entrez votre spécialité personnalisée">
+                  <mat-icon matPrefix>add_circle</mat-icon>
+                  <button mat-icon-button matSuffix color="primary" (click)="addCustomSpecialty()" [disabled]="!newCustomSpecialty">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </mat-form-field>
+              
+                <!-- Liste des spécialités personnalisées ajoutées -->
+                <div *ngIf="customSpecialties.length > 0" style="margin-bottom: 15px;">
+                  <h4 style="margin-bottom: 10px; color: #64748b;">Spécialités personnalisées ajoutées:</h4>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <div *ngFor="let specialty of customSpecialties; let i = index" 
+                         style="background-color: #eaefff; color: #4361ee; padding: 5px 10px; border-radius: 16px; display: flex; align-items: center;">
+                      <span style="margin-right: 5px;">{{ specialty }}</span>
+                      <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="removeCustomSpecialty(i)">
+                        <mat-icon style="font-size: 16px; width: 16px; height: 16px;">close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Ville</mat-label>
+                <mat-icon matPrefix>location_city</mat-icon>
+                <mat-select formControlName="ville">
+                  <mat-option *ngFor="let city of villes" [value]="city">{{ city }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Adresse du cabinet</mat-label>
+                <mat-icon matPrefix>business</mat-icon>
+                <input matInput formControlName="cabinetAdresse" placeholder="Adresse de votre cabinet">
+              </mat-form-field>
+
+             
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Professional Information Tab (For Secretaries) -->
+      <mat-tab *ngIf="userRole && userRole.toUpperCase() === 'SECRETAIRE'">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">work</mat-icon>
+          <span class="tab-label">Informations Professionnelles</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <div class="info-message">
+            <mat-icon>info</mat-icon>
+            <span>Ces informations seront visibles par les médecins avec lesquels vous travaillez.</span>
+          </div>
+
+          <div class="cv-section">
+            <h3>Curriculum Vitae</h3>
+            
+            <div class="cv-status" *ngIf="userProfile?.cvFilePath">
+              <div class="cv-preview">
+                <mat-icon class="cv-icon">picture_as_pdf</mat-icon>
+                <div class="cv-info">
+                  <span class="cv-filename">{{ getCVFileName() }}</span>
+                  <span class="cv-uploaded">CV téléchargé</span>
+                </div>
+                <div class="cv-actions">
+                  <button mat-icon-button color="primary" (click)="viewCV()" matTooltip="Voir le CV">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="removeCV()" matTooltip="Supprimer le CV">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="cv-upload" *ngIf="!userProfile?.cvFilePath">
+              <div class="upload-area" 
+                   (dragover)="onCVDragOver($event)" 
+                   (dragleave)="onCVDragLeave($event)" 
+                   (drop)="onCVDrop($event)"
+                   [class.drag-over]="isCVDragOver">
+                <mat-icon>cloud_upload</mat-icon>
+                <p>Glissez votre CV ici (format PDF uniquement)</p>
+                <button mat-raised-button color="primary" (click)="triggerCVFileInput()">
+                  Parcourir
+                </button>
+                <input type="file" #cvFileInput style="display: none" (change)="onCVFileSelected($event)" accept=".pdf">
+              </div>
+            </div>
+            
+            <div *ngIf="selectedCVFile" class="selected-file">
+              <mat-icon>insert_drive_file</mat-icon>
+              <span>{{ selectedCVFile.name }}</span>
+              <button mat-icon-button color="warn" (click)="removeSelectedCVFile()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            
+            <mat-progress-bar *ngIf="cvUploadProgress > 0" 
+                             [value]="cvUploadProgress"
+                             class="upload-progress"></mat-progress-bar>
+            
+            <div *ngIf="selectedCVFile && cvUploadProgress === 0" class="upload-actions">
+              <button mat-raised-button color="primary" (click)="uploadCV()">
+                <mat-icon>upload</mat-icon>
+                Télécharger le CV
+              </button>
+            </div>
+            
+            <div class="cv-requirements">
+              <p><mat-icon class="requirement-icon">info</mat-icon> Format accepté: PDF uniquement</p>
+              <p><mat-icon class="requirement-icon">info</mat-icon> Taille maximum: 10 Mo</p>
+              <p><mat-icon class="requirement-icon">info</mat-icon> Le CV est nécessaire pour que les médecins puissent vous associer à leur cabinet</p>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Medical Information Tab (For Patients) -->
+      <mat-tab *ngIf="userRole && userRole.toUpperCase() === 'PATIENT'">
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">local_hospital</mat-icon>
+          <span class="tab-label">Informations Médicales</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <form [formGroup]="profileForm" class="profile-form">
+            <!-- État de Santé -->
+            <div class="info-group">
+              <h3>État de Santé</h3>
+              <mat-form-field appearance="outline" class="medical-field">
+                <mat-label>État Général</mat-label>
+                <mat-select formControlName="etatGeneral">
+                  <mat-option value="">Sélectionnez votre état</mat-option>
+                  <mat-option value="excellent">Excellent</mat-option>
+                  <mat-option value="good">Bon</mat-option>
+                  <mat-option value="fair">Moyen</mat-option>
+                  <mat-option value="poor">Mauvais</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="medical-field">
+                <mat-label>Antécédents Chirurgicaux</mat-label>
+                <textarea matInput formControlName="antecedentsChirurgicaux" rows="2" 
+                          placeholder="Décrivez vos antécédents chirurgicaux"></textarea>
+                <mat-hint *ngIf="!profileForm.get('antecedentsChirurgicaux')?.value">
+                  Aucun antécédent chirurgical signalé. Vous pouvez modifier votre profil pour ajouter des antécédents si nécessaire.
+                </mat-hint>
+              </mat-form-field>
+            </div>
+
+            <!-- Allergies -->
+            <div class="info-group">
+              <h3>Allergies</h3>
+              <div class="allergies-section">
+                <div class="allergies-display" *ngIf="getAllergies().length > 0">
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let allergie of getAllergies()" 
+                              [removable]="true" 
+                              (removed)="removeAllergy(allergie)">
+                      {{allergie}}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+                
+                <div class="empty-field-message" *ngIf="getAllergies().length === 0">
+                  <mat-icon>info</mat-icon>
+                  <span>Aucune allergie n'a été signalée.</span>
+                </div>
+                
+                <div class="add-allergy-section">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Ajouter une allergie</mat-label>
+                    <input matInput #allergyInput placeholder="Saisissez une allergie">
+                    <button mat-icon-button matSuffix (click)="addAllergy(allergyInput.value); allergyInput.value=''">
+                      <mat-icon>add_circle</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  
+                  <div class="common-allergies">
+                    <p>Suggestions :</p>
+                    <mat-chip-set>
+                      <mat-chip *ngFor="let allergie of commonAllergies"
+                                (click)="addAllergy(allergie)"
+                                [disabled]="isAllergyPresent(allergie)">
+                        {{allergie}}
+                      </mat-chip>
+                    </mat-chip-set>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Medications -->
+            <div class="info-group">
+              <h3>Prise Médicamenteuse</h3>
+              <mat-form-field appearance="outline" class="medical-field">
+                <mat-label>Détails des médicaments</mat-label>
+                <textarea matInput formControlName="medicationDetails" rows="2" 
+                          placeholder="Détaillez votre prise médicamenteuse actuelle"></textarea>
+                <mat-hint *ngIf="!profileForm.get('medicationDetails')?.value">
+                  Aucune prise médicamenteuse signalée. Vous pouvez modifier votre profil si votre situation change.
+                </mat-hint>
+              </mat-form-field>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Security Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">security</mat-icon>
+          <span class="tab-label">Sécurité</span>
+        </ng-template>
+        
+        <div class="tab-content">
+          <div class="password-form-container">
+            <h3>Changer le Mot de Passe</h3>
+            
+            <div *ngIf="passwordChangeSuccess" class="success-message">
+              <mat-icon>check_circle</mat-icon>
+              <div class="success-content">
+                <h4>Mot de passe modifié avec succès!</h4>
+                <p>Votre mot de passe a été mis à jour. Vous pouvez l'utiliser pour votre prochaine connexion.</p>
+              </div>
+            </div>
+            
+            <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" class="password-form" *ngIf="!passwordChangeSuccess">
+              <mat-form-field appearance="outline">
+                <mat-label><mat-icon class="label-icon">lock</mat-icon> Mot de Passe Actuel</mat-label>
+                <input matInput [type]="hideCurrentPassword ? 'password' : 'text'" formControlName="currentPassword" placeholder="Saisissez votre mot de passe actuel">
+                <button mat-icon-button matSuffix (click)="hideCurrentPassword = !hideCurrentPassword" type="button" aria-label="Toggle password visibility">
+                  <mat-icon>{{hideCurrentPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('currentPassword')?.hasError('required')">
+                  Le mot de passe actuel est requis
+                </mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label><mat-icon class="label-icon">lock_open</mat-icon> Nouveau Mot de Passe</mat-label>
+                <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword" placeholder="Saisissez un nouveau mot de passe">
+                <button mat-icon-button matSuffix (click)="hideNewPassword = !hideNewPassword" type="button" aria-label="Toggle password visibility">
+                  <mat-icon>{{hideNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+                  Le nouveau mot de passe est requis
+                </mat-error>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+                  Le mot de passe doit contenir au moins 8 caractères
+                </mat-error>
+              </mat-form-field>
+              
+              <!-- Password Strength Indicator (outside of mat-form-field) -->
+              <div class="password-strength-wrapper" *ngIf="passwordForm.get('newPassword')?.value">
+                <div class="password-requirements">
+                  <strong>Exigences minimales :</strong> Un mot de passe doit contenir au moins 8 caractères ET (un chiffre OU un caractère spécial).<br>
+                  <strong>Mot de passe fort :</strong> 8 caractères avec à la fois des chiffres ET des caractères spéciaux.
+                </div>
+                <div class="password-strength-bar">
+                  <div class="strength-segments">
+                    <div class="segment" [style.background-color]="passwordStrength >= 25 ? passwordStrengthColor : '#e0e0e0'"></div>
+                    <div class="segment" [style.background-color]="passwordStrength >= 50 ? passwordStrengthColor : '#e0e0e0'"></div>
+                    <div class="segment" [style.background-color]="passwordStrength >= 75 ? passwordStrengthColor : '#e0e0e0'"></div>
+                    <div class="segment" [style.background-color]="passwordStrength >= 90 ? passwordStrengthColor : '#e0e0e0'"></div>
+                  </div>
+                  <span class="strength-text" [style.color]="passwordStrengthColor">{{passwordStrengthText}}</span>
+                </div>
+                <div class="password-status" [ngClass]="{'valid': isPasswordValid(), 'invalid': !isPasswordValid()}">
+                  <mat-icon>{{ isPasswordValid() ? 'check_circle' : 'error' }}</mat-icon>
+                  <span>{{ isPasswordValid() ? 'Mot de passe acceptable' : 'Le mot de passe ne répond pas aux exigences minimales' }}</span>
+                </div>
+              </div>
+              
+              <mat-form-field appearance="outline">
+                <mat-label><mat-icon class="label-icon">lock_open</mat-icon> Confirmer le Mot de Passe</mat-label>
+                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" placeholder="Confirmez votre nouveau mot de passe">
+                <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button" aria-label="Toggle password visibility">
+                  <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+                  La confirmation du mot de passe est requise
+                </mat-error>
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                  Les mots de passe ne correspondent pas
+                </mat-error>
+              </mat-form-field>
+            </form>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  
+  <!-- Floating Save Button - Now handles both profile and password changes -->
+  <button mat-fab class="floating-save-btn" 
+          [ngClass]="{'security-mode': activeTab === 'security'}" 
+          (click)="handleSave()" 
+          [disabled]="loading || (activeTab === 'security' && (!passwordForm.valid || !isPasswordValid()))" 
+          [matTooltip]="activeTab === 'security' ? 'Changer le mot de passe' : 'Enregistrer les modifications'">
+    <span class="save-btn-content">
+      <mat-icon>{{ activeTab === 'security' ? 'lock_reset' : 'save' }}</mat-icon>
+      <span class="save-label">{{ activeTab === 'security' ? 'Changer' : 'Sauvegarder' }}</span>
+    </span>
+    <div class="save-btn-loader" *ngIf="loading">
+      <mat-spinner diameter="30"></mat-spinner>
+    </div>
+  </button>
+</div>
+
+<div *ngIf="showWelcomeBanner" class="welcome-banner">
+  <!-- Your welcome banner content here -->
+  <button mat-button (click)="closeWelcomeBanner()">Fermer</button>
+</div>

@@ -1,0 +1,345 @@
+<div class="verification-dialog">
+  <!-- Progress Indicator -->
+  <div class="progress-container">
+    <div class="progress-steps">
+      <div class="step-item" [ngClass]="getStepClass(0)">
+        <div class="step-number">
+          <span *ngIf="currentStep > 0"><mat-icon>check</mat-icon></span>
+          <span *ngIf="currentStep <= 0">1</span>
+        </div>
+        <div class="step-label">Bienvenue</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" [ngClass]="getStepClass(1)">
+        <div class="step-number">
+          <span *ngIf="currentStep > 1"><mat-icon>check</mat-icon></span>
+          <span *ngIf="currentStep <= 1">2</span>
+        </div>
+        <div class="step-label">Informations</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" [ngClass]="getStepClass(2)">
+        <div class="step-number">
+          <span *ngIf="currentStep > 2"><mat-icon>check</mat-icon></span>
+          <span *ngIf="currentStep <= 2">3</span>
+        </div>
+        <div class="step-label">Cabinet</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" [ngClass]="getStepClass(3)">
+        <div class="step-number">
+          <span *ngIf="currentStep > 3"><mat-icon>check</mat-icon></span>
+          <span *ngIf="currentStep <= 3">4</span>
+        </div>
+        <div class="step-label">Diplôme</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-content">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p class="loading-text">Traitement en cours...</p>
+      <mat-progress-bar mode="determinate" [value]="uploadProgress" *ngIf="uploadProgress > 0"></mat-progress-bar>
+      <p class="progress-text" *ngIf="uploadProgress > 0">{{ uploadProgress }}%</p>
+    </div>
+  </div>
+
+  <!-- Step 0: Welcome -->
+  <div class="verification-step welcome-step" *ngIf="currentStep === 0">
+    <div class="modal-content">
+      <h2 class="welcome-title">Bienvenue, {{data?.userName}} !</h2>
+      
+      <div class="illustration">
+        <img src="assets/images/welcome.png" alt="Welcome illustration">
+      </div>
+
+      <h3 class="section-title">Complétez votre profil médical</h3>
+      
+      <p class="section-text">
+        Veuillez compléter vos informations personnelles et soumettre les documents requis pour la vérification de votre profil.
+Cette étape est essentielle pour activer votre compte et commencer à exercer sur la plateforme
+      </p>
+      
+      <div class="navigation-buttons">
+        <button mat-raised-button class="next-btn" (click)="nextStep()">Suivant</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Basic Information -->
+  <div class="verification-step step-1" *ngIf="currentStep === 1">
+    <div class="step-header">
+      <h2 class="step-title">
+        <mat-icon>person</mat-icon>
+        Informations Professionnelles
+      </h2>
+      <p class="step-description">
+        Veuillez remplir les informations suivantes pour commencer votre processus de vérification.
+      </p>
+    </div>
+
+    <div class="step-illustration">
+      <img src="assets/images/doctor-verification.svg" alt="Doctor Verification" onerror="this.src='assets/images/doctor-verification.png'">
+    </div>
+
+    <div class="form-container">
+      <form [formGroup]="verificationForm">
+        <!-- First Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nom du Cabinet</mat-label>
+            <input matInput formControlName="cabinetName" placeholder="Ex: Cabinet Dentaire Central">
+            <mat-icon matSuffix>business</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('cabinetName')">{{ getErrorMessage('cabinetName') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Années d'Expérience</mat-label>
+            <input matInput type="number" formControlName="yearsOfExperience" placeholder="Ex: 5">
+            <mat-icon matSuffix>timeline</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('yearsOfExperience')">{{ getErrorMessage('yearsOfExperience') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Second Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Numéro de téléphone</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="12345678">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-hint>Format: 8 chiffres sans indicatif pays (exemple: 12345678)</mat-hint>
+            <mat-error *ngIf="isFieldInvalid('phoneNumber')">{{ getErrorMessage('phoneNumber') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Adresse Personnelle</mat-label>
+            <input matInput formControlName="address" placeholder="Ex: 123 Rue de la République">
+            <mat-icon matSuffix>home</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('address')">{{ getErrorMessage('address') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Third Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Adresse du Cabinet</mat-label>
+            <input matInput formControlName="cabinetAddress" placeholder="Ex: 5 Rue de la Liberté">
+            <mat-icon matSuffix>business</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('cabinetAddress')">{{ getErrorMessage('cabinetAddress') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ville</mat-label>
+            <mat-select formControlName="ville">
+              <mat-option *ngFor="let city of villes" [value]="city">{{ city }}</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>location_city</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('ville')">{{ getErrorMessage('ville') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Fourth Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Code Postal</mat-label>
+            <input matInput formControlName="postalCode" placeholder="Ex: 75001">
+            <mat-icon matSuffix>markunread_mailbox</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('postalCode')">{{ getErrorMessage('postalCode') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Spécialités</mat-label>
+            <mat-select formControlName="specialties" multiple>
+              <mat-option *ngFor="let specialty of specialties" [value]="specialty">{{ specialty }}</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>medical_services</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('specialties')">{{ getErrorMessage('specialties') }}</mat-error>
+            <mat-hint *ngIf="!isSpecialtySelected() && verificationForm.get('specialties')?.touched">Sélectionnez au moins une spécialité</mat-hint>
+          </mat-form-field>
+        </div>
+        
+        <!-- Custom specialty field (when "Autre" is selected) -->
+        <div class="form-row" *ngIf="verificationForm.get('specialties')?.value?.includes('Autre')">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Précisez votre spécialité</mat-label>
+            <input matInput formControlName="customSpecialty" placeholder="Entrez votre spécialité personnalisée">
+            <mat-icon matSuffix>add_circle</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Fifth Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Message (Optionnel)</mat-label>
+            <textarea matInput formControlName="message" rows="4" placeholder="Informations additionnelles à partager..."></textarea>
+            <mat-icon matSuffix>comment</mat-icon>
+            <mat-hint>Informations supplémentaires pour l'administration</mat-hint>
+            <mat-error *ngIf="isFieldInvalid('message')">{{ getErrorMessage('message') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </div>
+
+    <div class="step-actions">
+      <span class="spacer"></span>
+      
+      <!-- Emergency Fix Button -->
+      <button mat-raised-button color="accent" (click)="submitBasicInfo()" style="margin-left: 10px;">
+        Valider
+      </button>
+      
+    </div>
+  </div>
+
+  <!-- Step 2: Cabinet Photo Upload -->
+  <div class="verification-step step-2" *ngIf="currentStep === 2">
+    <div class="step-header">
+      <h2 class="step-title">
+        <mat-icon>store</mat-icon>
+        Photo du Cabinet
+      </h2>
+      <p class="step-description">
+        Veuillez télécharger une photo claire de votre cabinet dentaire.
+      </p>
+    </div>
+
+    <div class="upload-container">
+      <div class="upload-card">
+        <div class="upload-illustration" *ngIf="!cabinetPhotoPreview">
+          <img src="assets/images/clinic-upload.svg" alt="Cabinet Upload" onerror="this.src='assets/images/clinic-upload.png'">
+          <h3>Photo du Cabinet</h3>
+          <p>Téléchargez une photo claire de votre cabinet dentaire pour vérification.</p>
+        </div>
+
+        <div class="photo-preview" *ngIf="cabinetPhotoPreview">
+          <img [src]="cabinetPhotoPreview" alt="Cabinet Preview">
+          <button mat-mini-fab color="warn" class="remove-button" (click)="removeCabinetPhoto()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <input 
+          type="file" 
+          id="cabinet-photo-input" 
+          accept="image/*" 
+          style="display: none;" 
+          (change)="onCabinetPhotoSelected($event)"
+        >
+
+        <div class="upload-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="upload-button" 
+            (click)="triggerCabinetPhotoUpload()">
+            <mat-icon>upload</mat-icon>
+            Sélectionner une Photo
+          </button>
+        </div>
+      </div>
+
+      <mat-card class="upload-tips">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>tips_and_updates</mat-icon>
+          <mat-card-title>Conseils pour la Photo</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul>
+            <li>Assurez-vous que la photo montre clairement votre espace de travail</li>
+            <li>L'image doit être de bonne qualité et bien éclairée</li>
+            <li>Formats acceptés: JPG, PNG (max. 10 MB)</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="step-actions">
+      <button mat-stroked-button (click)="prevStep()">
+        <mat-icon>navigate_before</mat-icon>
+        Retour
+      </button>
+      <span class="spacer"></span>
+      <button mat-raised-button color="primary" (click)="nextStep()" [disabled]="!cabinetPhotoFile">
+        Continuer
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 3: Diploma Photo Upload -->
+  <div class="verification-step step-3" *ngIf="currentStep === 3">
+    <div class="step-header">
+      <h2 class="step-title">
+        <mat-icon>school</mat-icon>
+        Photo du Diplôme
+      </h2>
+      <p class="step-description">
+        Veuillez télécharger une photo claire de votre diplôme médical.
+      </p>
+    </div>
+
+    <div class="upload-container">
+      <div class="upload-card">
+        <div class="upload-illustration" *ngIf="!diplomaPhotoPreview">
+          <img src="assets/images/diploma-upload.svg" alt="Diploma Upload" onerror="this.src='assets/images/diploma-upload.png'">
+          <h3>Photo du Diplôme</h3>
+          <p>Téléchargez une photo claire de votre diplôme médical pour vérification.</p>
+        </div>
+
+        <div class="photo-preview" *ngIf="diplomaPhotoPreview">
+          <img [src]="diplomaPhotoPreview" alt="Diploma Preview">
+          <button mat-mini-fab color="warn" class="remove-button" (click)="removeDiplomaPhoto()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <input 
+          type="file" 
+          id="diploma-photo-input" 
+          accept="image/*,.pdf" 
+          style="display: none;" 
+          (change)="onDiplomaPhotoSelected($event)"
+        >
+
+        <div class="upload-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="upload-button" 
+            (click)="triggerDiplomaPhotoUpload()">
+            <mat-icon>upload</mat-icon>
+            Sélectionner une Photo
+          </button>
+        </div>
+      </div>
+
+      <mat-card class="upload-tips">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>tips_and_updates</mat-icon>
+          <mat-card-title>Conseils pour la Photo</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul>
+            <li>Assurez-vous que le diplôme est lisible et que toutes les informations sont visibles</li>
+            <li>L'image doit être de bonne qualité et bien éclairée</li>
+            <li>Formats acceptés: JPG, PNG, PDF (max. 10 MB)</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="step-actions">
+      <button mat-stroked-button (click)="prevStep()">
+        <mat-icon>navigate_before</mat-icon>
+        Retour
+      </button>
+      <span class="spacer"></span>
+      <button mat-raised-button color="accent" (click)="uploadDiplomaPhoto()" [disabled]="!diplomaPhotoFile">
+        <mat-icon>check</mat-icon>
+        Terminer la Vérification
+      </button>
+    </div>
+  </div>
+</div> 

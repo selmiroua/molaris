@@ -1,0 +1,1 @@
+ALTER TABLE appointment_document DROP COLUMN appointment_id; 
